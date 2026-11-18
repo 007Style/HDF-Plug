@@ -2,7 +2,7 @@
 
 This is the only interface between the Outlook add-in and HoneyDue-Flow (HDF). It is a small HTTP/JSON API served by HDF on the user's own computer. Both sides are built and tested against this file. `PLAN.md` explains why it exists and `RESEARCH.md` the facts behind it.
 
-Status: **draft, revision 3 (transport changed from plain http to https after the Mac spike). No HDF code exists.**
+Status: **draft, revision 4 (https transport after the Mac spike; one allowed origin, the hosted page). No HDF code exists.**
 
 ## 1. Transport and rules
 
@@ -13,7 +13,7 @@ Status: **draft, revision 3 (transport changed from plain http to https after th
 | Format | JSON in, JSON out, `Content-Type: application/json; charset=utf-8` |
 | Version | Path prefix `/v1`. `hello` also returns `apiVersion` |
 | Auth | `Authorization: Bearer <token>` on everything except `hello` and `connect` |
-| CORS | `Access-Control-Allow-Origin` is the add-in's own origin (a constant in HDF), never `*`. Any other origin gets no CORS headers and a `403` |
+| CORS | `Access-Control-Allow-Origin` echoes the request's origin only if it equals **one constant in HDF**: the GitHub Pages address of the add-in page. Never `*`. Any other origin gets no CORS headers and a `403` |
 | Preflight | `OPTIONS` answered with the allowed methods and headers, plus `Access-Control-Allow-Private-Network: true` |
 | Host header | Must be `127.0.0.1:<port>` or `localhost:<port>`, else `403` (DNS rebinding) |
 | Body size | 8 KB maximum, else `413` |

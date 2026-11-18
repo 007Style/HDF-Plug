@@ -160,6 +160,6 @@ Client: **Outlook for Mac 16.115.1108.0**, Safari engine (WebKit). Run 2026-11-1
 
 ### D1. Consequences
 1. HDF's listener must speak **https** on `localhost`, with a certificate the computer trusts. The user has to approve that trust once on each computer.
-2. **If HDF serves the add-in page itself (Plan B), then with HDF closed Outlook cannot load the page at all.** Outlook would show its own generic "can't load" message. The friendly "HoneyDue-Flow was not detected" panel could not be shown. That conflicts with a stated requirement. Keeping the page on a separate always-available web host avoids it, but needs a page from a public origin to be able to call `https://localhost`, which is **not yet proven** on any client.
+2. **The page must come from a web address, not from HDF.** If HDF served it, then with HDF closed Outlook could not load the page and would show its own generic error, so the "HoneyDue-Flow was not detected" message could not appear. Decision (PLAN 4.1): hosted page on GitHub Pages. Whether a page from a real web address may call `https://localhost` is **not yet proven** (round 2).
 3. Tested only on Mac. Windows (WebView2, a Chromium engine with its own rules for public pages calling local addresses) is unknown.
 4. In the second report the sender and recipient were both a Gmail address while the mailbox was `daneyand@outlook.com`. "Which address is me" cannot rely on the mailbox address alone (PLAN risks).
