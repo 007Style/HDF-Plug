@@ -23,7 +23,10 @@ export const Install: React.FC<{ pageUrl?: string; copy?: (text: string) => Prom
 
   return (
     <section className="rounded-lg border border-gray-200 bg-gray-50 p-4 space-y-4" aria-label={TEXTS.installTitle}>
-      <h1 className="text-lg font-semibold">{TEXTS.installTitle}</h1>
+      <div className="flex items-center gap-3">
+        <img src={new URL('assets/bee-80.png', pageUrl).toString()} alt="" width={40} height={40} className="rounded-lg" />
+        <h1 className="text-lg font-semibold">{TEXTS.installTitle}</h1>
+      </div>
       <p>{TEXTS.installIntro}</p>
 
       <div className="space-y-1">

@@ -19,6 +19,7 @@ describe('PLG-I installing from the page', () => {
     expect(screen.getByRole('link', { name: TEXTS.installOpenOutlook })).toHaveAttribute('href', 'https://aka.ms/olksideload');
     for (const step of TEXTS.installSteps) expect(screen.getByText(step)).toBeInTheDocument();
     expect(screen.getByText(TEXTS.installNeeds)).toBeInTheDocument();
+    expect(document.querySelector('section img')).toHaveAttribute('src', 'https://007style.github.io/HDF-Plug/assets/bee-80.png');
   });
 
   it('PLG-I03 Copy address copies exactly the address and says so', async () => {
