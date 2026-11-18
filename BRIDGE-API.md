@@ -2,7 +2,7 @@
 
 This is the only interface between the Outlook add-in and HoneyDue-Flow (HDF). It is a small HTTP/JSON API served by HDF on the user's own computer. Both sides are built and tested against this file. `PLAN.md` explains why it exists and `RESEARCH.md` the facts behind it.
 
-Status: **revision 5. `hello`, `connect`, the connect status call and `DELETE connect` are built and tested in HDF on branch `feature/outlook-bridge` (commit `8034bea`, tests `BRG-`). The data endpoints (2.3 to 2.6) are not built yet.**
+Status: **revision 6. Every endpoint in this file is built and tested in HDF 1.2.0 (branch `feature/outlook-bridge`; tests `BRG-`) and used by the add-in (tests `PLG-`). Changes since revision 5: a new `502 contacts_unavailable`, the window time-out is 25 seconds, and a `check` of a person already in a flow with no readable cadence name returns an empty `flow` object.**
 
 ## 1. Transport and rules
 
@@ -43,7 +43,8 @@ Status: **revision 5. `hello`, `connect`, the connect status call and `DELETE co
 | 424 | `not_connected` | HDF is not signed in to Microsoft 365 (state 5) |
 | 429 | `rate_limited` | Too many calls (60 per minute, all callers together) |
 | 500 | `internal` | Anything else. Message is generic |
-| 504 | `app_busy` | HDF window did not answer in time |
+| 502 | `contacts_unavailable` | HDF could not read the Outlook address book (Microsoft Graph failed). Nothing was changed; try again |
+| 504 | `app_busy` | HDF window did not answer within 25 seconds |
 
 ## 2. Endpoints
 
@@ -120,6 +121,7 @@ Response, always HTTP 200 for the four business outcomes, so the add-in does not
 Rules:
 - `missing` uses exactly these words: `first name`, `last name`, `company`, `email`.
 - Order of checks: signed in (else `424`), in Outlook contacts, four fields present, not already in a flow.
+- `already_in_flow` carries `flow.cadenceName`, or an empty `flow` object when the flow's name cannot be read (a single step has no cadence).
 - `eligible` carries `contact.email`: the address HDF will actually use. If it differs from the request (the match was on a second address) the add-in shows "Emails will go to ...".
 - `contact` is present only when an Outlook contact was found, and it describes that one contact. The API never returns more than one.
 - Matching is case-insensitive, against every address on the Outlook contact, in every contact folder.

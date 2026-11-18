@@ -2,7 +2,7 @@
 
 Project: **HDF-Plug**, an Outlook add-in for **HoneyDue-Flow (HDF)**.
 Target HDF version: 1.1.1 today, the bridge ships in **1.2.0**.
-Status: **revision 8. Phase 1 is in progress. The repository is PUBLIC and the page is live at https://007style.github.io/HDF-Plug/ (GitHub Pages, deployed by `.github/workflows/pages.yml`). The add-in scaffold, the connect panel, the bridge client, the manifest generator and 68 tests are built. HDF side (branch `feature/outlook-bridge`): H1 and the connection part. `README.md` is written. Next: the Phase 1 exit test on Mac new Outlook.**
+Status: **revision 9. Phase 1 and the panel (Phase 3 on the Mac side) are built and tested against a fake HoneyDue-Flow: reading the person, the four-field check, the flow picker with search, the date and time, the warnings, adding, and every failure state, with 150 tests. HDF 1.2.0 is built (branch `feature/outlook-bridge`). Not yet proven in a real Outlook. Next: you test on Mac new Outlook.**
 Companion files: [`RESEARCH.md`](RESEARCH.md) (what was checked and how sure we are), [`BRIDGE-API.md`](BRIDGE-API.md) (the contract between the add-in and HDF).
 
 ---

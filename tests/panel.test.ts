@@ -214,7 +214,7 @@ describe('PLG-T: the words', () => {
   });
   it('PLG-T02 every message is non-empty', () => {
     for (const [k, v] of Object.entries(TEXTS)) {
-      const s = typeof v === 'function' ? v(2) : v;
+      const s = typeof v === 'function' ? (v as (...a: any[]) => string)('a', 'b', 'c') : v;
       expect(s.length, k).toBeGreaterThan(0);
     }
   });

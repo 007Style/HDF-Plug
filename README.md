@@ -10,7 +10,7 @@
 [![Works with](https://img.shields.io/badge/works%20with-HoneyDue--Flow%201.2.0-F5A623?style=for-the-badge)](https://github.com/007Style/honeyDue-Flow)
 [![Outlook](https://img.shields.io/badge/Outlook-Mac%20%C2%B7%20Windows%20%C2%B7%20web-0078D4?style=for-the-badge)](#️-which-outlook-is-supported)
 [![License](https://img.shields.io/badge/license-proprietary-D0021B?style=for-the-badge)](#-license)
-[![Tests](https://img.shields.io/badge/tests-68%20passing-2EA44F?style=for-the-badge)](#-testing)
+[![Tests](https://img.shields.io/badge/tests-150%20passing-2EA44F?style=for-the-badge)](#-testing)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 
@@ -61,15 +61,15 @@ This repository is **in development**. Version 1.0.0 is not released. Be clear a
 | 📭 "HoneyDue-Flow was not detected" panel | ✅ Built, tested | Tested with a fake HoneyDue-Flow, not yet in Outlook |
 | 🤝 Connect to HoneyDue-Flow (Allow / Deny) | ✅ Built, tested | Same: tested against a faithful fake, not yet in Outlook |
 | 🩺 Every "cannot go on" state (too old, switched off, not signed in) | ✅ Built, tested | See [The panel, every state](#-the-panel-every-state) |
-| 👤 Reading the person from the email | ⏳ **Not built yet** | Phase 3 |
-| ✅ Eligibility check (four fields) | ⏳ **Not built yet** | The HoneyDue-Flow side is also not built yet |
-| 📋 Flow picker with search, date and time | ⏳ **Not built yet** | Phase 3 |
-| 🍯 Putting the person into a flow | ⏳ **Not built yet** | Needs HoneyDue-Flow 1.2.0 part 2 |
+| 👤 Reading the person from the email | ✅ Built, tested | Sender on a received email, recipients on a sent one, never yourself. Reads Outlook through Office.js, which is **not yet tried in a real Outlook** |
+| ✅ Eligibility check (four fields) | ✅ Built, tested on both sides | The rule runs inside HoneyDue-Flow 1.2.0 |
+| 📋 Flow picker with search, date and time | ✅ Built, tested | With HoneyDue-Flow's own warnings for a past time or a held time |
+| 🍯 Putting the person into a flow | ✅ Built, tested on both sides | Uses the same code as HoneyDue-Flow's own Add Flow window |
 | 🪟 Windows | 🧪 **Not tested yet** | Planned test on classic Outlook for Windows once the build is complete |
 
-**The next milestone** is the first real test: load the manifest into Outlook for Mac, open the panel, and confirm that the page on GitHub Pages can find a running HoneyDue-Flow, show the Allow prompt, and connect. Until that works end to end in Outlook, treat everything above marked "tested" as *tested with a fake*, not *proven in Outlook*.
+**The next milestone** is the first real test: load the manifest into Outlook for Mac, open the panel, connect, and add a person to a flow from a real email. Until that works end to end in Outlook, treat everything above marked "tested" as *tested with a fake*, not *proven in Outlook*.
 
-HoneyDue-Flow's side of the connection is built and tested on the branch [`feature/outlook-bridge`](https://github.com/007Style/honeyDue-Flow/tree/feature/outlook-bridge) of that repository, and is not yet part of a release. **HoneyDue-Flow 1.2.0, the version this add-in needs, has not been published yet.**
+HoneyDue-Flow's side is built in HoneyDue-Flow **1.2.0**, which this add-in needs.
 
 ---
 
@@ -175,7 +175,7 @@ You do this once. Nothing is typed. Afterwards the panel shows **Connected**.
 
 ## 🚀 A first session, step by step
 
-> This is the **intended** session. Steps 5 to 8 are **not built yet** (see [Status](#-status-what-works-today)).
+> This is the session as built. It has been tested against a fake HoneyDue-Flow, and not yet in a real Outlook (see [Status](#-status-what-works-today)).
 
 1. **Start HoneyDue-Flow** and make sure it is signed in to Microsoft 365 (Settings, **Sign in with Microsoft**).
 2. **Set up** the Outlook Add-in card once, and install the add-in in Outlook (see above).
@@ -192,7 +192,7 @@ You do this once. Nothing is typed. Afterwards the panel shows **Connected**.
 
 The panel is always in exactly one of these states. All the wording lives in one file, [`src/texts.ts`](src/texts.ts), and a test checks that every state has words.
 
-### ✅ Built and tested (with a fake HoneyDue-Flow)
+### ✅ Built and tested (with a fake HoneyDue-Flow, not yet in a real Outlook)
 
 | State | What you see | What to do |
 |---|---|---|
@@ -205,22 +205,20 @@ The panel is always in exactly one of these states. All the wording lives in one
 | ⏳ **Waiting for Allow** | "Switch to HoneyDue-Flow and click Allow." Button: **Cancel** | Click **Allow** in HoneyDue-Flow |
 | 🙅 **Not allowed / timed out / busy / locked** | A red line says what happened (Deny pressed, no answer in 60 seconds, another request is waiting, or too many refusals, with minutes to wait) and the button changes to **Try again** | Try again, or wait |
 | 🔓 **Not signed in** | "HoneyDue-Flow is not signed in to Microsoft 365. Sign in from its Settings." | Sign in inside HoneyDue-Flow |
-| 🟢 **Connected** | "Connected", with the HoneyDue-Flow version and a **Disconnect** button. *Today the panel stops here.* | |
-
-### ⏳ Planned, not built yet
-
-| State | What you will see |
-|---|---|
-| 👤 **No person on the email** | "No other person on this email." (mail from or to yourself only) |
-| 🕵️ **Not in Outlook contacts** | "{email} is not in your Outlook contacts, so it can't be added to a flow." |
-| 📝 **Missing fields** | "This Outlook contact is missing: last name, company. Add them in Outlook, then reopen this panel." |
-| 🔁 **Already in a flow** | "{name} is already in the flow '{cadence}'. A contact can be in only one flow at a time." |
-| 📂 **No flows to choose** | "There are no flows or templates yet. Create one in HoneyDue-Flow first." |
-| 📋 **The form** | Person, flow search, start date and time, **Cancel** and **OK, start flow** |
-| 🚫 **A flow that is switched off** | Greyed in the list, with its reason as hover text |
-| ⏱️ **Submitting** | A spinner and a disabled OK (stops a double click) |
-| 🎉 **Success** | "{name} is in '{flow}'. First step: Fri Nov 20, 9:00 AM." |
-| ❌ **Failure** | The message HoneyDue-Flow returned, in plain words, and **Try again** |
+| 🟢 **Connected** | The email's person and the form below, and at the bottom "Connected to HoneyDue-Flow 1.2.0" with a **Disconnect** button | |
+| 👤 **No person on the email** | "No other person on this email." (mail from or to yourself only) | Open another email |
+| 📝 **Not an email, or still being written** | "Open an email message to add the person on it to a flow." or "This message is still being written. Send it, then open it from Sent Items..." | Open a sent or received email |
+| 🕵️ **Not in Outlook contacts** | "{email} is not in your Outlook contacts, so it can't be added to a flow." and **Check again** | Add the person to your Outlook contacts, then **Check again** |
+| 📝 **Missing fields** | "This Outlook contact is missing: last name, company. Add them in Outlook, then press Check again." | Fix the contact in Outlook, then **Check again** |
+| 🔁 **Already in a flow** | "{name} is already in the flow '{cadence}'. A contact can be in only one flow at a time." | Nothing; stop the flow in HoneyDue-Flow first if you want another |
+| 📂 **No flows to choose** | "There are no flows or templates yet. Create one in HoneyDue-Flow first." | Create one in HoneyDue-Flow |
+| 📋 **The form** | The person, a **Search flows** box, two groups (**Multi-step** and **Single step**, which includes "Phone call, no script"), a start date and time, and **OK, start flow**. OK stays off until a flow is chosen | Pick a flow, check the time, press **OK** |
+| 👥 **Several people** (a sent email) | A choice of person, each marked "Can be added" or "Can't be added". Up to ten | Pick the person |
+| 🚫 **A flow that is switched off** | Greyed in the list, with its reason | Fix it in HoneyDue-Flow |
+| ⚠️ **Time warnings** | "This time has already passed..." or HoneyDue-Flow's own words when a shield would hold an email | Pick another time, or go ahead |
+| ⏱️ **Adding** | "Adding..." and everything locked, so a double click cannot add twice | Wait |
+| 🎉 **Success** | "{name} is in '{flow}'. First step: Fri Nov 20, 9:00 AM." with **Done**, and a warning if the calendar could not be updated | **Done** |
+| ❌ **Failure** | HoneyDue-Flow's own words (busy, flow switched off, no longer eligible, and so on) and **Try again** | Try again |
 
 The full table, with how each state is detected, is in section 5.3 of [`PLAN.md`](PLAN.md).
 
@@ -465,8 +463,8 @@ The two sides can be updated **one at a time**. The connection has its own versi
 
 ## ⚠️ Known limits
 
-- **Not finished.** Only the connection part of the panel exists. Reading the email, the four-field check, the flow picker and adding a person are not built (see [Status](#-status-what-works-today)).
-- **Needs HoneyDue-Flow 1.2.0**, which is not published yet.
+- **Not yet tried in a real Outlook.** Everything is built and tested against a fake HoneyDue-Flow, and nothing has been proven inside Outlook yet (see [Status](#-status-what-works-today)).
+- **Needs HoneyDue-Flow 1.2.0 or later.**
 - **Same computer only.** Outlook and HoneyDue-Flow must run on the same machine.
 - **Needs the internet** to load the panel, because Outlook fetches the page from the web. HoneyDue-Flow itself does not need it for this.
 - **HoneyDue-Flow must be running.** Nothing is queued while it is closed.

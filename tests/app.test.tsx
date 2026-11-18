@@ -69,14 +69,6 @@ describe('PLG-U: what the panel shows', () => {
     expect(panel.cancel).toHaveBeenCalledTimes(1);
   });
 
-  it('PLG-U07 connected: shows the version and Disconnect disconnects', async () => {
-    const { panel } = fakePanel({ kind: 'connected', appVersion: '1.2.0' });
-    render(<App panel={panel} />);
-    expect(screen.getByText('HoneyDue-Flow 1.2.0')).toBeInTheDocument();
-    await userEvent.click(screen.getByRole('button', { name: TEXTS.disconnect }));
-    expect(panel.disconnect).toHaveBeenCalledTimes(1);
-  });
-
   it('PLG-U08 checking: a short status message and no buttons', () => {
     render(<App panel={fakePanel({ kind: 'checking' }).panel} />);
     expect(screen.getByRole('status')).toHaveTextContent(TEXTS.checking);

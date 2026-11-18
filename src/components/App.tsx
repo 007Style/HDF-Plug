@@ -1,26 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import type { Panel, PanelState } from '../state/panel';
+import type { Session } from '../state/session';
 import { TEXTS } from '../texts';
+import { Button, Card } from './ui';
+import { Connected } from './Connected';
 
 const DOWNLOAD_URL = 'https://github.com/007Style/honeyDue-Flow/releases';
 
-const Card: React.FC<{ title: string; children: React.ReactNode; role?: 'status' | 'alert' }> = ({ title, children, role }) => (
-  <section className="rounded-lg border border-gray-200 bg-gray-50 p-4 space-y-3" role={role} aria-label={title}>
-    <h1 className="text-base font-semibold">{title}</h1>
-    {children}
-  </section>
-);
-
-const Button: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement> & { primary?: boolean }> = ({ primary, className, ...rest }) => (
-  <button
-    {...rest}
-    className={`rounded-md px-3 py-1.5 text-sm font-medium border ${
-      primary ? 'bg-blue-600 border-blue-600 text-white hover:bg-blue-700' : 'bg-white border-gray-300 text-gray-800 hover:bg-gray-100'
-    } disabled:opacity-60 ${className ?? ''}`}
-  />
-);
-
-export const App: React.FC<{ panel: Panel }> = ({ panel }) => {
+export const App: React.FC<{ panel: Panel; session?: Session }> = ({ panel, session }) => {
   const [state, setState] = useState<PanelState>(panel.get());
 
   useEffect(() => {
@@ -31,12 +18,12 @@ export const App: React.FC<{ panel: Panel }> = ({ panel }) => {
 
   return (
     <main className="p-3 max-w-xl mx-auto">
-      <View state={state} panel={panel} />
+      <View state={state} panel={panel} session={session} />
     </main>
   );
 };
 
-const View: React.FC<{ state: PanelState; panel: Panel }> = ({ state, panel }) => {
+const View: React.FC<{ state: PanelState; panel: Panel; session?: Session }> = ({ state, panel, session }) => {
   switch (state.kind) {
     case 'checking':
       return <p role="status" className="text-gray-600">{TEXTS.checking}</p>;
@@ -85,12 +72,6 @@ const View: React.FC<{ state: PanelState; panel: Panel }> = ({ state, panel }) =
       );
 
     case 'connected':
-      return (
-        <Card title={TEXTS.connectedTitle} role="status">
-          <p>{TEXTS.connected}</p>
-          <p className="text-xs text-gray-500">HoneyDue-Flow {state.appVersion}</p>
-          <Button onClick={() => void panel.disconnect()}>{TEXTS.disconnect}</Button>
-        </Card>
-      );
+      return session ? <Connected session={session} panel={panel} appVersion={state.appVersion} /> : null;
   }
 };
