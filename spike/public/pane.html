@@ -69,7 +69,13 @@ function runNetwork(){
     .then(function(){ return probe('S2b GET http://localhost', 'http://localhost:47615/v1/hello'); })
     .then(function(){ return probe('S2c POST json+Authorization (preflight)', 'http://127.0.0.1:47615/v1/hello', {
         method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer spike' }, body: '{"x":1}' }); })
-    .then(function(){ return probe('S3  GET https://localhost:47630/ping (Plan B, same origin)', 'https://localhost:47630/ping'); });
+    .then(function(){ return probe('S3  GET https://localhost:47630/ping (Plan B, same origin)', 'https://localhost:47630/ping'); })
+    .then(function(){
+      // Cross-origin https -> https: this page is on "localhost"; 127.0.0.1 counts as a DIFFERENT origin, like a hosted page would be.
+      return probe('S2d GET https://127.0.0.1:47630/ping (cross-origin https)', 'https://127.0.0.1:47630/ping');
+    })
+    .then(function(){ return probe('S2e POST https://127.0.0.1:47630/ping json+Authorization (cross-origin preflight)', 'https://127.0.0.1:47630/ping', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer spike' }, body: '{"x":1}' }); });
 }
 
 function runAll(){

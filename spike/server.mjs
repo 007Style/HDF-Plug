@@ -45,7 +45,17 @@ if (!existsSync(keyFile) || !existsSync(certFile)) {
 }
 const pages = https.createServer({ key: readFileSync(keyFile), cert: readFileSync(certFile) }, (req, res) => {
   const url = new URL(req.url, 'https://localhost');
-  log('PAGES ', req.method, url.pathname);
+  const origin = req.headers.origin || '';
+  log('PAGES ', req.method, url.pathname, 'origin=' + (origin || '-'), 'host=' + req.headers.host);
+  if (origin && url.pathname === '/ping') {
+    // cross-origin test: a page on another address (127.0.0.1 vs localhost) calling this https listener
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+    res.setHeader('Access-Control-Allow-Headers', 'authorization, content-type');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Private-Network', 'true');
+  }
+  if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
   if (url.pathname === '/ping') {
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify({ app: 'honeyDue-Flow-SPIKE-planB', apiVersion: 1 }));
