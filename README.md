@@ -119,7 +119,7 @@ An Outlook add-in is a small web page that Outlook shows in a side panel, so the
 
 ## ⬇️ Download and install
 
-> ⚠️ **Before this works end to end you need two things, and one of them is not released yet:**
+> ⚠️ **Before this works end to end you need two things:**
 > 1. **HoneyDue-Flow 1.2.0 or later.** Download it from the [HoneyDue-Flow releases page](https://github.com/007Style/honeyDue-Flow/releases/tag/v1.2.0) (that repository is private, so you need to be invited).
 > 2. The add-in itself, installed in Outlook as below.
 >
