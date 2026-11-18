@@ -222,7 +222,8 @@ From HDF's log, in one session: `contacts/check`, `flow-options`, `schedule/chec
 
 - The panel also worked with several recipients on a sent email.
 - A first attempt looked stuck: the screen read "No flow matches that search" with OK greyed. The log shows no `schedule/check` call at that point, so no flow had been chosen yet and OK was greyed by design ("Choose a flow to continue"). The cause of the "no match" text was not confirmed; it appears when the search box holds text that matches nothing.
-- **Not yet checked:** whether the connection survives a full quit of Outlook; the person then showing as "already in a flow" after Done; the not-in-contacts case on a received email.
+- **Checked later the same day:** after a full quit and reopen of Outlook, the panel showed **Connected to HoneyDue-Flow 1.2.0**. On a received email from `[sender address]` (not in the user's Outlook contacts) it read the address, showed "Read from a received email: [sender address]", gave the not-in-contacts reason and offered **Check again**. Reported by the user, not logged.
+- **Not yet checked:** the person showing as "already in a flow" after Done.
 - **Asked for, cannot be built as asked:** a button on a contact in the People view. Microsoft's add-in documentation says add-ins activate only when reading or composing a message or appointment, not on other item types.
 
 ## The panel followed the open email correctly (2026-11-18)
