@@ -2,7 +2,7 @@
 
 Project: **HDF-Plug**, an Outlook add-in for **HoneyDue-Flow (HDF)**.
 Target HDF version: 1.1.1 today, the bridge ships in **1.2.0**.
-Status: **revision 7. Phase 1 is in progress. HDF side built and tested on branch `feature/outlook-bridge` (H1 and the connection part: `hello`, connect with Allow / Deny, certificate, Settings card). The add-in project is next.**
+Status: **revision 8. Phase 1 is in progress. The repository is PUBLIC and the page is live at https://007style.github.io/HDF-Plug/ (GitHub Pages, deployed by `.github/workflows/pages.yml`). The add-in scaffold, the connect panel, the bridge client, the manifest generator and 68 tests are built. HDF side (branch `feature/outlook-bridge`): H1 and the connection part. `README.md` is written. Next: the Phase 1 exit test on Mac new Outlook.**
 Companion files: [`RESEARCH.md`](RESEARCH.md) (what was checked and how sure we are), [`BRIDGE-API.md`](BRIDGE-API.md) (the contract between the add-in and HDF).
 
 ---
@@ -448,7 +448,7 @@ Each has a default so work is not blocked. Reply only where you disagree.
    - **`honeyDue-Flow`:** a branch `feature/outlook-bridge` from the tagged `v1.1.1`. H1 first (alone), then the minimal bridge and certificate.
 3. You test the slice on **Mac (new Outlook)** only. The result is recorded in `RESEARCH.md`. A block on Mac revises the plan before Phase 2. Windows classic is tested later, at the Windows gate (Phase 3b).
 4. Every HDF change follows its `AGENTS.md` Feature Gate: Feature Register row, test cases with ids and status `TODO`, tests in the same change, `testplan:write` then `testplan:check`, IPC names in both approved lists.
-5. The spike folder has been deleted (done, before the repository was made public).
+5. The spike folder has been deleted (done, before the repository was made public). The git history was **deliberately left as it is** (decided by the user on 2026-11-18): it still holds the old spike code and the author's Outlook.com mailbox address, which is already public on the author's GitHub profile. No keys, tokens or certificates are in the history (checked).
 
 ## 18. Documentation for the public repository
 

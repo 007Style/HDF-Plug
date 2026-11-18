@@ -183,3 +183,16 @@ Still not shown by this test:
 2. **The page must come from a web address, not from HDF.** If HDF served it, then with HDF closed Outlook could not load the page and would show its own generic error, so the "HoneyDue-Flow was not detected" message could not appear. Decision (PLAN 4.1): hosted page on GitHub Pages. Whether a page from a real web address may call `https://localhost` is **not yet proven** (round 2).
 3. Tested only on Mac. Windows (WebView2, a Chromium engine with its own rules for public pages calling local addresses) is unknown.
 4. In the second report the sender and recipient were both a Gmail address while the mailbox was an Outlook.com address. "Which address is me" cannot rely on the mailbox address alone (PLAN risks).
+
+## E. GitHub Pages, checked 2026-11-18
+
+The repository was made public and Pages was switched on with the Actions source. Checked with `curl` on the live address `https://007style.github.io/HDF-Plug/`:
+
+| Check | Result |
+|---|---|
+| Page, `commands.html`, `manifest.xml`, the built JS and the three icons | All answer `200` (one icon answered `503` once, right after the first publish, then `200`) |
+| `X-Frame-Options` or `Content-Security-Policy` headers (which would stop Outlook on the web from showing the page in a frame) | **Neither is sent** |
+| Caching | `cache-control: max-age=600` |
+| Built asset paths | Under `/HDF-Plug/`, as the manifest expects |
+
+Still **not** checked: that Outlook can load this page and that it can call `https://localhost` from there. That is the Phase 1 exit test, on Mac.
