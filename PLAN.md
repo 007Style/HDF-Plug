@@ -1,8 +1,8 @@
 # HDF-Plug: Project Plan
 
 Project: **HDF-Plug**, an Outlook add-in for **HoneyDue-Flow (HDF)**.
-Target HDF version: 1.1.0 today, the bridge ships in **1.2.0**.
-Status: **plan only (revision 2, after your review answers of 2026-11-16). No code is written until this plan is approved.**
+Target HDF version: 1.1.1 today, the bridge ships in **1.2.0**.
+Status: **revision 7. Phase 1 is in progress. HDF side built and tested on branch `feature/outlook-bridge` (H1 and the connection part: `hello`, connect with Allow / Deny, certificate, Settings card). The add-in project is next.**
 Companion files: [`RESEARCH.md`](RESEARCH.md) (what was checked and how sure we are), [`BRIDGE-API.md`](BRIDGE-API.md) (the contract between the add-in and HDF).
 
 ---
@@ -434,7 +434,15 @@ Each has a default so work is not blocked. Reply only where you disagree.
 
 ## 17. What happens next
 
-1. **Q2 and Q12 are decided** (public repository; no more spikes). This plan is revision 6.
+1. **Q2 and Q12 are decided** (public repository; no more spikes). This plan is revision 7 (revision 6 plus the build notes below).
+
+   **Built in HDF so far (commits `1caf4bc` and `8034bea`, 1,504 tests green, all four time zones, coverage above its floors):** H1 (shared add-to-flow function), H3 for `hello` and `connect`, H4 (hashed tokens), H10 (own certificate per install) and the Settings card of H6. **Decisions taken while building (all follow your earlier rules):**
+   - **The certificate is made when the user presses Set up in Settings, not silently at start-up.** The system's trust prompt then appears at a moment the user chose and understands. Until then the port is closed and the add-in shows state 1; its text must say "open HoneyDue-Flow, Settings, Outlook Add-in, press Set up" when it can tell nothing answers.
+   - **The Allow / Deny question is a system dialog from HDF's main process**, with Deny as the default and Escape. A web page can neither fake it nor press it.
+   - **A request with no `Origin` header can call `hello` only.** That lets a person or a tool check that HDF is listening, and still keeps every other endpoint locked to the add-in's page.
+   - **`hello` and `OPTIONS` still answer while the bridge is switched off**; everything else says `bridge_off`.
+   - **The certificate lasts 365 days** and is replaced when fewer than 30 remain; the old one is un-trusted first.
+   - **Not built yet:** `contacts/check`, `flow-options`, `schedule/check`, `flows`, the driver lookup `lookupContactByEmail` (H2) and the login item (H9).
 2. **Phase 1 starts**, in two repositories:
    - **`HDF-Plug`:** create `007Style/HDF-Plug` on GitHub, scaffold the add-in project, publish a minimal panel to GitHub Pages.
    - **`honeyDue-Flow`:** a branch `feature/outlook-bridge` from the tagged `v1.1.1`. H1 first (alone), then the minimal bridge and certificate.

@@ -2,22 +2,22 @@
 
 This is the only interface between the Outlook add-in and HoneyDue-Flow (HDF). It is a small HTTP/JSON API served by HDF on the user's own computer. Both sides are built and tested against this file. `PLAN.md` explains why it exists and `RESEARCH.md` the facts behind it.
 
-Status: **draft, revision 4 (https transport after the Mac spike; one allowed origin, the hosted page). No HDF code exists.**
+Status: **revision 5. `hello`, `connect`, the connect status call and `DELETE connect` are built and tested in HDF on branch `feature/outlook-bridge` (commit `8034bea`, tests `BRG-`). The data endpoints (2.3 to 2.6) are not built yet.**
 
 ## 1. Transport and rules
 
 | Item | Value |
 |---|---|
 | Address | `https://localhost:<port>`, port from `47615` to `47624` (first free one in HDF). Bound to the loopback address only, never `0.0.0.0`. **Plain `http` is not offered: Outlook on Mac refuses it (RESEARCH D)** |
-| Certificate | A self-signed certificate HDF creates for this computer (names: `localhost`, `127.0.0.1`; not a CA; key kept in HDF's user-data folder, never in the database or a backup). The user approves trust once. See PLAN H10 |
+| Certificate | A self-signed certificate HDF creates for this computer when the user presses **Set up** in Settings, Outlook Add-in (names: `localhost`, `127.0.0.1`; not a CA; server use only; valid 365 days and renewed when under 30 days remain; key kept in HDF's user-data folder, never in the database or a backup). The user approves trust once (own keychain on Mac, Current User store on Windows, no administrator). **Until Set up is done the port is closed, so the add-in sees HDF as "not detected"; the add-in's message for that state must say where to look (PLAN state 1).** See PLAN H10 |
 | Format | JSON in, JSON out, `Content-Type: application/json; charset=utf-8` |
 | Version | Path prefix `/v1`. `hello` also returns `apiVersion` |
 | Auth | `Authorization: Bearer <token>` on everything except `hello` and `connect` |
-| CORS | `Access-Control-Allow-Origin` echoes the request's origin only if it equals **one constant in HDF**: the GitHub Pages address of the add-in page. Never `*`. Any other origin gets no CORS headers and a `403` |
-| Preflight | `OPTIONS` answered with the allowed methods and headers, plus `Access-Control-Allow-Private-Network: true` |
+| CORS | `Access-Control-Allow-Origin` echoes the request's origin only if it equals **one constant in HDF**: the GitHub Pages address of the add-in page (an origin has no path: `https://007style.github.io`). Never `*`. A request that **has** any other `Origin` gets no CORS headers and a `403 forbidden_origin`. A request with **no** `Origin` header at all (not a web page; for example a person or a tool) may call `hello` only; `connect`, its status call and `OPTIONS` need the allowed Origin, and every other endpoint needs a token |
+| Preflight | `OPTIONS` answered `204` with `GET, POST, DELETE, OPTIONS`, headers `Authorization, Content-Type`, and `Access-Control-Allow-Private-Network: true`, only for the allowed Origin |
 | Host header | Must be `127.0.0.1:<port>` or `localhost:<port>`, else `403` (DNS rebinding) |
 | Body size | 8 KB maximum, else `413` |
-| Timeout | HDF answers within 10 seconds or the add-in treats it as "not detected" |
+| Timeout | HDF answers within 10 seconds (server-side header and request timeouts) or the add-in treats it as "not detected" |
 | Time | Date-times are ISO 8601 UTC strings (`2026-11-20T14:00:00.000Z`), as in HDF's own Add Flow modal |
 | Logging | HDF logs that a call happened and its result code. It does **not** log email addresses or names |
 
@@ -32,7 +32,8 @@ Status: **draft, revision 4 (https transport after the Mac spike; one allowed or
 | 400 | `bad_request` | Missing or malformed field |
 | 401 | `unauthorized` | No token, wrong token, or revoked. Add-in goes to state 3 |
 | 403 | `forbidden_origin` / `forbidden_host` | Origin or Host check failed |
-| 403 | `bridge_off` | Switched off in HDF Settings (state 4). `hello` still answers, see below |
+| 403 | `bridge_off` | Switched off in HDF Settings (state 4). Every endpoint except `hello` and `OPTIONS` answers this; `hello` still answers, see below |
+| 404 | `not_found` | (also) An unknown path or method, for a caller with a token or without |
 | 404 | `not_found` | Unknown path or cadence |
 | 409 | `already_in_flow` | Contact already has a pending step |
 | 409 | `cadence_off` | Cadence is switched off (missing template) |
@@ -40,7 +41,7 @@ Status: **draft, revision 4 (https transport after the Mac spike; one allowed or
 | 423 | `connect_locked` | Too many denied or timed-out connect requests, try later (`retryAfterSeconds` included) |
 | 409 | `connect_busy` | Another connect request is already waiting for the user's answer |
 | 424 | `not_connected` | HDF is not signed in to Microsoft 365 (state 5) |
-| 429 | `rate_limited` | Too many calls (60 per minute per token) |
+| 429 | `rate_limited` | Too many calls (60 per minute, all callers together) |
 | 500 | `internal` | Anything else. Message is generic |
 | 504 | `app_busy` | HDF window did not answer in time |
 
@@ -61,7 +62,7 @@ Used to detect HDF and its readiness. Answers even when the bridge is off, so st
 }
 ```
 - `app` must equal `"HoneyDue-Flow"`; the add-in rejects any other answer on that port.
-- `connection` is `connected`, `disconnected` or `error` (Microsoft 365 sign-in state from `oauth_status`).
+- `connection` is `connected`, `disconnected` or `error` (Microsoft 365 sign-in, reported by the HDF page to the main process; `connected` only when the connection mode is Microsoft 365 and `oauth_status` is `connected`; `error` when the page has not reported or reports anything else).
 - `connected` is whether **this** call's token is valid. Without a token it is `false`.
 - Never contains the signed-in address, a name, or a token.
 
@@ -76,22 +77,22 @@ Reply, at once:
 ```json
 { "ok": true, "requestId": "r_9f2c1a", "expiresInSeconds": 60 }
 ```
-Step 2, the add-in asks every 1 second until the answer arrives:
+Step 2, the add-in asks `GET /v1/connect/{requestId}` (the id looks like `r_` plus 12 hex characters; any other shape is `404`) every 1 second until the answer arrives:
 ```json
 { "ok": true, "status": "pending" }
 ```
 ```json
 { "ok": true, "status": "allowed", "token": "<64 hex characters>" }
 ```
-`status` is one of `pending`, `allowed`, `denied`, `expired`. The token is returned **once** and then forgotten by HDF (only a hash is kept).
+`status` is one of `pending`, `allowed`, `denied`, `expired`. The token is returned **once**: a second ask for the same request answers `expired`. HDF keeps only a hash. An unknown request id is `404 not_found`.
 
 Rules:
 - The request is refused with `403 forbidden_origin` and **no prompt is shown** unless the Origin is the add-in's own (section 1).
-- HDF brings its window to the front, or sends a system notification if the window is hidden. The prompt names the add-in client and says what it can do: "check contacts and add them to flows".
+- HDF brings its window to the front (showing it if it was hidden in the tray) and asks with a **system dialog from the main process**, so no page can fake or auto-answer it. The dialog names the add-in client and says what it can do: "check your Outlook contacts and add people to flows". The buttons are Deny and Allow; Deny is the default and Escape is Deny. The dialog closes by itself when the request expires or the bridge is switched off.
 - Only one request waits at a time (`409 connect_busy`). The request expires after 60 seconds.
 - 3 denials or time-outs in a row refuse further requests for 10 minutes (`423 connect_locked`).
-- `clientName` is shown in the prompt and in HDF's list of connected add-ins, max 40 characters, so the user can revoke the right one.
-- HDF stores only a hash of the token (`bridge.json` in the user-data folder, outside the database and outside backups).
+- `clientName` is shown in the prompt and in HDF's list of connected add-ins, 1 to 40 plain characters (no control characters), so the user can revoke the right one. Anything else is `400 bad_request` and no prompt is shown.
+- HDF stores only a SHA-256 hash of the token (`bridge.json` in the user-data folder, mode 600, outside the database and outside backups). A damaged `bridge.json` is read as "nobody is connected".
 
 ### 2.3 `POST /v1/contacts/check`  (auth)
 Asks whether a person on the email can go into a flow.
@@ -198,7 +199,7 @@ Failures:
 `calendarNote` is HDF's "Problems: ..." text when the calendar could not be updated, or an empty string. The add-in shows it as a warning, not an error, because the contact **is** in the flow.
 
 ### 2.7 `DELETE /v1/connect`  (auth)
-The add-in forgets its connection and HDF removes that token. Revoking from HDF Settings does the same on the HDF side. Answer: `{ "ok": true }`.
+The add-in forgets its connection and HDF removes that token (only the caller's own). Revoking from HDF Settings does the same on the HDF side. Answer: `{ "ok": true }`; without a valid token `401`.
 
 ## 3. Behaviour guarantees
 
@@ -230,7 +231,8 @@ sequenceDiagram
     Srv-->>Pane: 200 {result}
 ```
 
-- New IPC channels `bridge-request` (main to renderer) and `bridge-respond` (renderer to main) are added to **both** approved lists (`electron/main.ts`, `electron/preload.ts`) or tests `ELE-33` and `ELE-45` fail.
+- **Built (part 1):** six IPC names for the Settings card and the sign-in state: `bridge-get-state`, `bridge-set-enabled`, `bridge-setup`, `bridge-revoke`, `bridge-remove-certificate` (all invoke) and `bridge-report-connection` (send), in the approved lists (TESTPLAN 12.8).
+- **To build (part 2):** `bridge-request` (main to renderer) and `bridge-respond` (renderer to main), added to **both** approved lists or `ELE-33` and `ELE-45` fail.
 - The renderer answers only five `op` names: `status` (for `hello`), `check`, `flowOptions`, `scheduleCheck` and `addFlow`. An unknown `op` is refused. No `op` accepts a script, a file path or a URL (test `ELE-31` keeps passing).
 
 ## 5. Test cases this contract creates (ids are proposed; they enter `TESTPLAN.md` as `TODO`)
@@ -238,6 +240,9 @@ sequenceDiagram
 | Id | Case |
 |---|---|
 | BRG-H01 | `hello` answers with app, versions, flags; no personal data |
+
+*The ids below are the proposal from revision 4. The built tests use the ids in HDF's TESTPLAN section 12.10 (`BRG-R` rules, `BRG-C` certificate, `BRG-H` hello, `BRG-A` transport and auth, `BRG-P` connect, `BRG-S` controller, `BRG-D` Allow / Deny, `BRG-X` safety, `BRG-W` main-process handlers). The data-endpoint cases below get their own letters when part 2 is built.*
+
 | BRG-H02 | `hello` answers while the bridge is off, with `bridgeEnabled: false` |
 | BRG-P01 to P07 | Connect: allowed (token returned once), denied, expired after 60 s, wrong Origin gives no prompt, second request while one waits, three denials lock for 10 minutes, `clientName` too long |
 | BRG-A01 to A06 | Auth: no token, bad token, revoked token, wrong origin, wrong Host, `OPTIONS` preflight headers |
