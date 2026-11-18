@@ -73,7 +73,7 @@ describe('PLG-M: the manifest', () => {
 
   it('PLG-M12 the button uses the HoneyDue-Flow icon files', () => {
     for (const n of [16, 32, 80]) {
-      const png = fs.readFileSync(`public/assets/icon-${n}.png`);
+      const png = fs.readFileSync(`public/assets/bee-${n}.png`);
       expect(png.subarray(1, 4).toString()).toBe('PNG');
       expect(png.readUInt32BE(16)).toBe(n);
       expect(png.readUInt32BE(20)).toBe(n);

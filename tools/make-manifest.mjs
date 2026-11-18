@@ -45,9 +45,9 @@ const hosts = (pin) => `
       </Hosts>
       <Resources>
         <bt:Images>
-          <bt:Image id="Icon16" DefaultValue="${base}/assets/icon-16.png"/>
-          <bt:Image id="Icon32" DefaultValue="${base}/assets/icon-32.png"/>
-          <bt:Image id="Icon80" DefaultValue="${base}/assets/icon-80.png"/>
+          <bt:Image id="Icon16" DefaultValue="${base}/assets/bee-16.png"/>
+          <bt:Image id="Icon32" DefaultValue="${base}/assets/bee-32.png"/>
+          <bt:Image id="Icon80" DefaultValue="${base}/assets/bee-80.png"/>
         </bt:Images>
         <bt:Urls>
           <bt:Url id="Commands.Url" DefaultValue="${base}/commands.html"/>
@@ -78,8 +78,8 @@ const xml = `<?xml version="1.0" encoding="UTF-8"?>
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="HoneyDue-Flow"/>
   <Description DefaultValue="Add the person on the email you are reading, or on the To line of the message you are writing, to a HoneyDue-Flow follow-up flow."/>
-  <IconUrl DefaultValue="${base}/assets/icon-32.png"/>
-  <HighResolutionIconUrl DefaultValue="${base}/assets/icon-80.png"/>
+  <IconUrl DefaultValue="${base}/assets/bee-32.png"/>
+  <HighResolutionIconUrl DefaultValue="${base}/assets/bee-80.png"/>
   <SupportUrl DefaultValue="https://github.com/007Style/HDF-Plug"/>
   <AppDomains>
     <AppDomain>${origin}</AppDomain>
