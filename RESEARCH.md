@@ -245,3 +245,13 @@ After a report of a "stale warning", the panel was changed to show which address
 - **A second press of the ribbon button to close the panel: not tried.** No documentation says it closes the panel. The pin icon and the X are the documented ways.
 - **The icon in the panel (the header added in `fd1f71f`) did not show at first, then did.** The live page was correct and was checked in headless Chrome. GitHub Pages sends `cache-control: max-age=600`, and the user's first look was inside that window (the page went live about 22:59, the user reopened Outlook about 23:05). A full quit of Outlook did not bring the new page in at once. The cause is a guess: a saved copy of the old page. It was not proven, because macOS blocks reading Outlook's cache folder from outside the app. A few minutes later the icon showed.
 - **What this means for users:** after an update, the panel may show the old page for up to about 10 minutes. This is a Pages setting that we cannot change.
+
+## Compose-window button on Mac new Outlook (2026-11-18)
+
+Reported by the user after trying it (not taken from a log). All four cases worked:
+- one contact with all four fields on the To line: the form appeared;
+- nobody on the To line: the "put the person you are writing to on the To line" message appeared;
+- more than one person on the To line: the "one person at a time" message appeared;
+- changing the To line while the panel was open: the panel followed the change.
+
+**Not recorded:** whether the panel followed by itself or only after **Check again**. The user answered "yes" to the question as asked, which did not separate the two. Treat the live update as **unconfirmed**, and keep **Check again** in place.

@@ -37,6 +37,17 @@ Until **Set up** is done the add-in cannot reach HoneyDue-Flow, and its panel sa
 | ✉️ Gmail, Yahoo or other IMAP mailboxes | ❌ Not supported | Outlook does not run add-ins for them |
 | 🏢 A company mailbox | ❔ Not tested | An administrator can upload the manifest in the Microsoft 365 admin center (**Integrated apps**) so everyone gets it |
 
+### Classic Outlook for Windows: how to install it
+
+Not yet tried by the author. These steps come from Microsoft's page on sideloading Outlook add-ins, not from a real install.
+
+1. Install HoneyDue-Flow 1.2.0 for Windows, open it, and in **Settings, Outlook Add-in** press **Set up** and approve the certificate prompt.
+2. In classic Outlook, choose **File**, then **Info**, then **Manage Add-ins**. This opens Outlook on the web in your browser and shows the **Add-Ins for Outlook** window. (The web address `https://aka.ms/olksideload` opens the same window.)
+3. Choose **My add-ins**. At the bottom, under **Custom Addins**, choose **Add a custom add-in**, then **Add from File**, and pick the downloaded `manifest.xml`. Accept the prompts.
+4. The add-in is installed on your mailbox on the web, and from there it reaches classic Outlook. **This can take up to 24 hours to show in classic Outlook.** Closing and reopening Outlook can help.
+
+The install works from the web version, and not from inside classic Outlook itself. It is the same window used on the Mac, reached from a different place.
+
 ## 5. Where it appears
 
 The button is in the ribbon for **an email you have open or selected**. It does **not** appear in the People or Contacts view, in the calendar for a contact, or in a folder list. Microsoft's add-in rules only start an add-in on messages and appointments.
