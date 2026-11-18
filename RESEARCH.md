@@ -238,3 +238,10 @@ After a report of a "stale warning", the panel was changed to show which address
 - **Tested here:** 167 tests with a fake Outlook and a fake HoneyDue-Flow (the To-line rules, the panel texts, the slow call to Outlook, the manifest having both buttons). None of it has run in a real Outlook.
 - **To try on the Mac:** reload the manifest, start a new message, address it to one contact who has all four fields, press the button, and see the form. Then add a second person to the To line and see the message. Then watch whether the panel updates by itself or needs **Check again**.
 - **Icon:** the ribbon icons (16, 32, 80 px) are now the HoneyDue-Flow icon, resized from HoneyDue-Flow's `build/icon.png`. How it looks at 16 px on the ribbon has not been seen yet.
+
+## Pin, icon in the panel (2026-11-18, Mac new Outlook)
+
+- **Pinning works.** The user pressed the pin icon in the panel's bar, and the panel stayed open from email to email. Reported by the user.
+- **A second press of the ribbon button to close the panel: not tried.** No documentation says it closes the panel. The pin icon and the X are the documented ways.
+- **The icon in the panel (the header added in `fd1f71f`) did not show at first, then did.** The live page was correct and was checked in headless Chrome. GitHub Pages sends `cache-control: max-age=600`, and the user's first look was inside that window (the page went live about 22:59, the user reopened Outlook about 23:05). A full quit of Outlook did not bring the new page in at once. The cause is a guess: a saved copy of the old page. It was not proven, because macOS blocks reading Outlook's cache folder from outside the app. A few minutes later the icon showed.
+- **What this means for users:** after an update, the panel may show the old page for up to about 10 minutes. This is a Pages setting that we cannot change.

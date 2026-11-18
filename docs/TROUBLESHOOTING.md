@@ -48,6 +48,8 @@ Find the words you see in the panel. Every message the panel can show is in [`sr
 | The button is not in the ribbon | Open an email. The add-in does not show in folder lists or for contacts. Classic Outlook can take up to 24 hours to show a new add-in. It does not run on Gmail or IMAP mailboxes |
 | The button never greys out | By design: Outlook cannot grey out a button on a Mac. The reason is shown in the panel |
 | **Add from URL** is greyed out | Use **Add from File** |
+| The panel still looks the way it did before an update | The page is kept for up to about 10 minutes (GitHub Pages' own setting). Quit Outlook fully, wait a few minutes, and open it again |
+| The panel closes when you click another email | Press the **pin** icon in the panel's bar. The panel then stays open and follows each email. Pinning is kept separately for reading and for writing a message |
 | Asked to **Connect** again | The panel's saved connection was cleared, or revoked in HoneyDue-Flow. Press **Connect**, then **Allow** |
 
 ## Still stuck
