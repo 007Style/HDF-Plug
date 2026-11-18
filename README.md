@@ -274,7 +274,7 @@ This is the one part of the setup that needs an explanation, because it is the o
 
 Until you press **Set up**, HoneyDue-Flow's port is **closed**, and the add-in shows **"HoneyDue-Flow was not detected"** with a pointer to the Set up button.
 
-> 🧪 **Honest note on testing.** The Mac certificate commands were run for real. The **Windows** commands were written from Microsoft's documentation and have **not been run** yet. They are first run at the Windows gate. Also not yet proven: Outlook accepting this certificate when the page comes from the real GitHub Pages address. That is the next test.
+> 🧪 **Honest note on testing.** The Mac certificate commands were run for real, and Outlook for Mac accepted the certificate when the page came from the real GitHub Pages address (the author's own Mac, new Outlook). The **Windows** commands were written from Microsoft's documentation and have **not been run** yet. They are first run at the Windows gate.
 
 ---
 
