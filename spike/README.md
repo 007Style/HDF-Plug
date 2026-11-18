@@ -10,6 +10,9 @@ It needs only Node (no `npm install`). It makes **no change to honeyDue-Flow** a
 | Fake bridge (plain http) | `http://127.0.0.1:47615` | HDF's future listener |
 | Test pane pages (https) | `https://localhost:47630` | Plan B (HDF serves the page) |
 
+## Quick way
+Mac: double-click `run-spike.command` (first time: right-click, Open, Open). Windows: double-click `run-spike.bat`. They do steps 1 to 3 below and open the install page.
+
 ## Steps (do this on the Mac first, then the Windows PC)
 
 1. **Start it** (leave the window open):
