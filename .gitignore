@@ -1,0 +1,4 @@
+node_modules/
+spike/certs/
+spike/manifest.xml
+.DS_Store
