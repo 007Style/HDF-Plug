@@ -201,3 +201,17 @@ Still **not** checked: that Outlook can load this page and that it can call `htt
 
 - **New Outlook for Mac, the author's mailbox:** **Add from URL** is **greyed out** in My add-ins, Custom Addins. **Add from File** works. The cause is not known: it may be the Outlook version, the account type or an administrator's policy. Not yet checked: whether the same mailbox in Outlook on the web has it, and whether a personal Outlook.com account does.
 - The install page therefore keeps the manifest file as a working fallback, and says so.
+
+## First real run on Mac new Outlook (2026-11-18)
+
+Proven in a real Outlook, against HDF 1.2.0 (from HDF's own log):
+
+- The page from GitHub Pages found HDF on `https://localhost:47615` with the certificate HDF made at **Set up** and the Mac trusted. This was the biggest open question and it works.
+- Connect, then Allow, issued a token; the panel showed **Connected**.
+- Office.js read the person from the open email, and `POST /v1/contacts/check` was answered (two calls, 200) from the real Outlook address book through Microsoft Graph.
+- A person not in Outlook Contacts gets the "not in your Outlook contacts" panel, with no form.
+- Before Set up, the panel correctly said "HoneyDue-Flow was not detected".
+- A leftover spike server on port 47615 made the panel say "not detected" even with HDF running. The panel skips a non-HDF answer, so the cause was that HDF was not yet listening. Ports 47615 to 47624 should be checked for other programs when "not detected" persists.
+- **Add from URL** is greyed out on this Mac (see above); **Add from File** works.
+
+Still unproven: adding a person who is in Contacts with all four fields (the form, the flow list, OK, In Flow); whether the saved connection survives a full Outlook quit; the unknown-sender case where the sender is the user's own second address (the test email was from the user's own Gmail address while the mailbox is Outlook.com).
