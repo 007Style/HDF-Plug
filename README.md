@@ -10,7 +10,7 @@
 [![Works with](https://img.shields.io/badge/works%20with-HoneyDue--Flow%201.2.0-F5A623?style=for-the-badge)](https://github.com/007Style/honeyDue-Flow)
 [![Outlook](https://img.shields.io/badge/Outlook-Mac%20%C2%B7%20Windows%20%C2%B7%20web-0078D4?style=for-the-badge)](#️-which-outlook-is-supported)
 [![License](https://img.shields.io/badge/license-proprietary-D0021B?style=for-the-badge)](#-license)
-[![Tests](https://img.shields.io/badge/tests-150%20passing-2EA44F?style=for-the-badge)](#-testing)
+[![Tests](https://img.shields.io/badge/tests-155%20passing-2EA44F?style=for-the-badge)](#-testing)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 
@@ -125,22 +125,25 @@ An Outlook add-in is a small web page that Outlook shows in a side panel, so the
 >
 > Both HoneyDue-Flow and Outlook must be on the **same computer**.
 
-### 1. Get the add-in manifest
+### 1. Open the install page
 
-The add-in is installed from one small file, `manifest.xml`, which tells Outlook the address of the page to show. Download it from:
+Open **<https://007style.github.io/HDF-Plug/>** in a web browser. Outside Outlook, the page shows how to install the add-in and the address to paste, with a **Copy address** button. **You do not have to download anything.**
 
-**<https://007style.github.io/HDF-Plug/manifest.xml>**
+The address Outlook needs is:
 
-(Right-click the link and save it, or open it and use *Save As*. Keep the name `manifest.xml`.)
+**`https://007style.github.io/HDF-Plug/manifest.xml`**
 
-### 2. Load it into Outlook (sideloading)
+### 2. Add it to Outlook (sideloading)
 
 This is the same on every Outlook that supports add-ins:
 
-1. In Outlook, open <https://aka.ms/olksideload> (Outlook may open the page for you in a browser or inside the app).
-2. Choose **My add-ins**.
-3. Under **Custom Addins**, choose **Add a custom add-in**, then **Add from File**.
-4. Pick the `manifest.xml` you saved and accept the warning that this add-in did not come from the store.
+1. Press **Copy address** on the install page.
+2. In Outlook, open <https://aka.ms/olksideload> (Outlook may open the page for you in a browser or inside the app).
+3. Choose **My add-ins**.
+4. Under **Custom Addins**, choose **Add a custom add-in**, then **Add from URL**. Paste the address and press **OK**.
+5. Accept the warning that this add-in did not come from the store.
+
+> If your Outlook has no **Add from URL**, choose **Add from File** instead and use the **Download manifest.xml** link on the install page. **Add from File** is the way that has been followed on the Mac; **Add from URL** has not been tried by the author yet.
 
 You should now see **Add to HoneyDue-Flow** in the ribbon when you open an email.
 

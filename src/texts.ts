@@ -97,6 +97,25 @@ export const TEXTS = {
   appBusy: 'HoneyDue-Flow is busy. Try again in a moment.',
   tooMany: 'Too many requests. Wait a moment, then try again.',
 
+  // The page opened in a browser, not inside Outlook: how to install it
+  installTitle: 'Install the HoneyDue-Flow add-in in Outlook',
+  installIntro: 'This page is the add-in. It runs inside Outlook, so to use it you add it to Outlook once. You do not need to download anything.',
+  installAddressLabel: 'Add-in address',
+  installCopy: 'Copy address',
+  installCopied: 'Copied',
+  installCopyFailed: 'Could not copy. Select the address and copy it yourself.',
+  installOpenOutlook: 'Open the Outlook add-in page',
+  installSteps: [
+    'Press Copy address above.',
+    'Open the Outlook add-in page (the link above). Sign in if asked.',
+    'Choose My add-ins, then under Custom Addins choose Add a custom add-in, then Add from URL.',
+    'Paste the address and press OK. Accept the warning that this add-in did not come from the store.',
+    'Open an email in Outlook. The Add to HoneyDue-Flow button appears in the ribbon.',
+  ],
+  installFallback: 'If you do not see Add from URL, choose Add from File instead, and use the manifest file below.',
+  installFile: 'Download manifest.xml',
+  installNeeds: 'You also need HoneyDue-Flow 1.2.0 or later running on this computer. Open its Settings, find Outlook Add-in and press Set up, once.',
+
   // Failure
   somethingWrong: 'Something went wrong talking to HoneyDue-Flow.',
 } as const;
