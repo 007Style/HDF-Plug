@@ -143,7 +143,7 @@ This is the same on every Outlook that supports add-ins:
 4. Under **Custom Addins**, choose **Add a custom add-in**, then **Add from URL**. Paste the address and press **OK**.
 5. Accept the warning that this add-in did not come from the store.
 
-> If your Outlook has no **Add from URL**, choose **Add from File** instead and use the **Download manifest.xml** link on the install page. **Add from File** is the way that has been followed on the Mac; **Add from URL** has not been tried by the author yet.
+> **Add from URL is greyed out on the author's Mac (new Outlook for Mac).** Outlook decides this, not the add-in, and the cause is not known. If yours is greyed out or missing too, choose **Add from File** and use the **Download manifest.xml** link on the install page. **Add from File** is the way that has been followed and works on the Mac.
 
 You should now see **Add to HoneyDue-Flow** in the ribbon when you open an email.
 

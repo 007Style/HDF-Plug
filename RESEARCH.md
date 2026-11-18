@@ -196,3 +196,8 @@ The repository was made public and Pages was switched on with the Actions source
 | Built asset paths | Under `/HDF-Plug/`, as the manifest expects |
 
 Still **not** checked: that Outlook can load this page and that it can call `https://localhost` from there. That is the Phase 1 exit test, on Mac.
+
+## Install from a web address (found 2026-11-18)
+
+- **New Outlook for Mac, the author's mailbox:** **Add from URL** is **greyed out** in My add-ins, Custom Addins. **Add from File** works. The cause is not known: it may be the Outlook version, the account type or an administrator's policy. Not yet checked: whether the same mailbox in Outlook on the web has it, and whether a personal Outlook.com account does.
+- The install page therefore keeps the manifest file as a working fallback, and says so.

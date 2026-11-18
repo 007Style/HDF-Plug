@@ -112,7 +112,7 @@ export const TEXTS = {
     'Paste the address and press OK. Accept the warning that this add-in did not come from the store.',
     'Open an email in Outlook. The Add to HoneyDue-Flow button appears in the ribbon.',
   ],
-  installFallback: 'If you do not see Add from URL, choose Add from File instead, and use the manifest file below.',
+  installFallback: 'If Add from URL is missing or greyed out (it is on some Outlooks, for reasons Microsoft controls), choose Add from File instead and use the manifest file below.',
   installFile: 'Download manifest.xml',
   installNeeds: 'You also need HoneyDue-Flow 1.2.0 or later running on this computer. Open its Settings, find Outlook Add-in and press Set up, once.',
 
