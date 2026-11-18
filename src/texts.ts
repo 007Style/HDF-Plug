@@ -45,6 +45,8 @@ export const TEXTS = {
   composing: 'This message is still being written. Send it, then open it from Sent Items to add the person on it.',
   noPerson: 'No other person on this email.',
   personHeading: 'Person on this email',
+  readFromSent: (email: string) => `Read from a sent email: ${email}`,
+  readFromReceived: (email: string) => `Read from a received email: ${email}`,
   checkingPerson: 'Checking this person...',
   personOk: 'Can be added',
   personNotOk: "Can't be added",

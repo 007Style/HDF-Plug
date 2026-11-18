@@ -80,6 +80,9 @@ const Body: React.FC<{ s: SessionState; session: Session }> = ({ s, session }) =
           ))}
         </fieldset>
       )}
+      <p className="text-xs text-gray-500" data-testid="read-from">
+        {item.direction === 'sent' ? TEXTS.readFromSent(person.email) : TEXTS.readFromReceived(person.email)}
+      </p>
       <Person_ s={s} session={session} person={person} check={check} />
     </div>
   );

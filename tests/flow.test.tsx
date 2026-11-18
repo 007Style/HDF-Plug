@@ -274,6 +274,14 @@ describe('PLG-E what is on the email', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(TEXTS.alreadyInFlowNamed('Jane Doe', 'Intro'));
   });
 
+  it('PLG-E06 the panel says which address it read and from what kind of email, and follows the next email', async () => {
+    const { change } = mount({}, { kind: 'people', direction: 'received', people: [{ email: 'jane@acme.com', name: 'Jane' }] });
+    await ready();
+    expect(screen.getByTestId('read-from')).toHaveTextContent(TEXTS.readFromReceived('jane@acme.com'));
+    change({ kind: 'people', direction: 'sent', people: [{ email: 'raj@x.com', name: 'Raj' }] });
+    await waitFor(() => expect(screen.getByTestId('read-from')).toHaveTextContent(TEXTS.readFromSent('raj@x.com')));
+  });
+
   it('PLG-E05 Disconnect is always there once connected, and shows the version', async () => {
     const { panel } = mount();
     await ready();
