@@ -7,11 +7,16 @@ It needs only Node (no `npm install`). It makes **no change to honeyDue-Flow** a
 ## What it runs
 | Piece | Address | Stands in for |
 |---|---|---|
-| Fake bridge (plain http) | `http://127.0.0.1:47615` | HDF's future listener |
+| Fake HDF listener, **http and https on the same port** | `http://127.0.0.1:47615` and `https://127.0.0.1:47615` | HDF's future listener. Round 1b tests only the scheme |
 | Test pane pages (https) | `https://localhost:47630` | Plan B (HDF serves the page) |
 
 ## Quick way
 Mac: double-click `run-spike.command` (first time: right-click, Open, Open). Windows: double-click `run-spike.bat`. They do steps 1 to 3 below and open the install page.
+
+## Round 1b: the clean http-versus-https test
+Same listener, same port 47615, same code. The page now runs block **T1** first (lines starting `T1a` to `T1g`): `http` and `https`, on `127.0.0.1` and `localhost`, with and without an `Authorization` header. If every `http` line fails and every `https` line passes, plain http is what Outlook blocks and HDF's listener needs a certificate. If the `http` lines pass, HDF needs no certificate here.
+
+To run it: stop the old launcher window (Ctrl+C), double-click `run-spike.command` again, then close and reopen the **HDF Spike** pane. **You do not need to reinstall the add-in**: the manifest only holds the page address, and the server sends the page with `no-store`. Press **Copy report** and paste it.
 
 ## Steps (do this on the Mac first, then the Windows PC)
 

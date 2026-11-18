@@ -63,6 +63,19 @@ function runStorage(){
   } catch(e){ show('S5 localStorage', 'FAIL ' + e.message); }
 }
 
+function runScheme(){
+  // Clean test: SAME listener, SAME port 47615, SAME handler. Only the scheme changes.
+  var post = { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer spike' }, body: '{"x":1}' };
+  log('--- T1: same port 47615, only http vs https changes ---');
+  return probe('T1a GET  http://127.0.0.1:47615/v1/hello', 'http://127.0.0.1:47615/v1/hello')
+    .then(function(){ return probe('T1b GET  https://127.0.0.1:47615/v1/hello', 'https://127.0.0.1:47615/v1/hello'); })
+    .then(function(){ return probe('T1c GET  http://localhost:47615/v1/hello', 'http://localhost:47615/v1/hello'); })
+    .then(function(){ return probe('T1d GET  https://localhost:47615/v1/hello', 'https://localhost:47615/v1/hello'); })
+    .then(function(){ return probe('T1e POST http://127.0.0.1:47615 +Authorization', 'http://127.0.0.1:47615/v1/hello', post); })
+    .then(function(){ return probe('T1f POST https://127.0.0.1:47615 +Authorization', 'https://127.0.0.1:47615/v1/hello', post); })
+    .then(function(){ return probe('T1g POST https://localhost:47615 +Authorization', 'https://localhost:47615/v1/hello', post); });
+}
+
 function runNetwork(){
   var B = 'http://127.0.0.1:47615/v1/hello';
   return probe('S2a GET http://127.0.0.1', B)
@@ -81,7 +94,7 @@ function runNetwork(){
 function runAll(){
   lines = []; out.textContent = '';
   runEnv(); runStorage();
-  runNetwork().then(function(){ log('--- done ---'); });
+  runScheme().then(runNetwork).then(function(){ log('--- done ---'); });
 }
 
 Office.onReady(function(info){
