@@ -1,8 +1,8 @@
 # HDF-Plug: Project Plan
 
 Project: **HDF-Plug**, an Outlook add-in for **HoneyDue-Flow (HDF)**.
-Target HDF version: 1.1.1 today, the bridge ships in **1.2.0**.
-Status: **revision 9. Phase 1 and the panel (Phase 3 on the Mac side) are built and tested against a fake HoneyDue-Flow: reading the person, the four-field check, the flow picker with search, the date and time, the warnings, adding, and every failure state, with 150 tests. HDF 1.2.0 is released (https://github.com/007Style/honeyDue-Flow/releases/tag/v1.2.0). Not yet proven in a real Outlook. Next: you test on Mac new Outlook.**
+Target HDF version: 1.2.0 (the bridge ships in 1.2.0).
+Status: **revision 10. Released as HDF-Plug v1.0.0 together with HoneyDue-Flow v1.2.0 (https://github.com/007Style/honeyDue-Flow/releases/tag/v1.2.0). It works end to end in new Outlook for Mac, where the author tested it: connect, check the person, pick a flow, add to a flow, pinning, and a button in a message being written (To line, one person). 172 tests pass. NOT tested: classic Outlook for Windows (the Windows certificate commands have never been run), new Outlook for Windows, and Outlook on the web. The Windows test is planned as the first thing after this release.**
 Companion files: [`RESEARCH.md`](RESEARCH.md) (what was checked and how sure we are), [`BRIDGE-API.md`](BRIDGE-API.md) (the contract between the add-in and HDF).
 
 ---
