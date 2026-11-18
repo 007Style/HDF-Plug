@@ -16,6 +16,7 @@ export const Install: React.FC<{ pageUrl?: string; copy?: (text: string) => Prom
 }) => {
   const address = manifestAddress(pageUrl);
   const [copied, setCopied] = useState<'no' | 'yes' | 'failed'>('no');
+  const [classic, setClassic] = useState(false);
 
   const onCopy = async () => {
     try { await copy(address); setCopied('yes'); } catch { setCopied('failed'); }
@@ -52,6 +53,19 @@ export const Install: React.FC<{ pageUrl?: string; copy?: (text: string) => Prom
         <a className="text-blue-700 underline" href={address} download="manifest.xml">{TEXTS.installFile}</a>
       </p>
       <p className="text-sm text-gray-700">{TEXTS.installNeeds}</p>
+
+      <div className="space-y-2">
+        <Button aria-expanded={classic} aria-controls="classic-steps" onClick={() => setClassic((v) => !v)}>{TEXTS.installClassicButton}</Button>
+        {classic && (
+          <div id="classic-steps" className="rounded-md border border-gray-200 bg-white p-3 space-y-2" role="region" aria-label={TEXTS.installClassicTitle}>
+            <h2 className="text-sm font-semibold">{TEXTS.installClassicTitle}</h2>
+            <p className="text-sm text-amber-800">{TEXTS.installClassicNote}</p>
+            <ol className="list-decimal pl-5 space-y-1 text-sm">
+              {TEXTS.installClassicSteps.map((step) => <li key={step}>{step}</li>)}
+            </ol>
+          </div>
+        )}
+      </div>
     </section>
   );
 };

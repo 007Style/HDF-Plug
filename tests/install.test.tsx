@@ -37,6 +37,19 @@ describe('PLG-I installing from the page', () => {
     expect(screen.getByLabelText(TEXTS.installAddressLabel)).toHaveValue('https://007style.github.io/HDF-Plug/manifest.xml');
   });
 
+  it('PLG-I06 the classic Outlook steps are behind a button, shown when pressed, hidden when pressed again, and say they are untried', async () => {
+    render(<Install pageUrl={PAGE} />);
+    const button = screen.getByRole('button', { name: TEXTS.installClassicButton });
+    expect(button).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByText(TEXTS.installClassicSteps[0])).toBeNull();
+    await userEvent.click(button);
+    expect(button).toHaveAttribute('aria-expanded', 'true');
+    for (const step of TEXTS.installClassicSteps) expect(screen.getByText(step)).toBeInTheDocument();
+    expect(screen.getByText(TEXTS.installClassicNote)).toBeInTheDocument();
+    await userEvent.click(button);
+    expect(screen.queryByText(TEXTS.installClassicSteps[0])).toBeNull();
+  });
+
   it('PLG-I05 the file is still offered, for an Outlook that has no Add from URL', () => {
     render(<Install pageUrl={PAGE} />);
     const a = screen.getByRole('link', { name: TEXTS.installFile });

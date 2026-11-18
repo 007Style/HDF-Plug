@@ -118,6 +118,17 @@ export const TEXTS = {
   ],
   installFallback: 'If Add from URL is missing or greyed out (it is on some Outlooks, for reasons Microsoft controls), choose Add from File instead and use the manifest file below.',
   installFile: 'Download manifest.xml',
+  installClassicButton: 'How do I install on classic Outlook?',
+  installClassicTitle: 'Installing on classic Outlook for Windows',
+  installClassicNote: 'These steps come from Microsoft\'s instructions. The author has not yet tried them on classic Outlook.',
+  installClassicSteps: [
+    'Install HoneyDue-Flow 1.2.0 or later for Windows, open it, and in Settings, Outlook Add-in, press Set up. Approve the certificate prompt.',
+    'Download manifest.xml with the link above, and keep it somewhere you can find it.',
+    'In classic Outlook, choose File, then Info, then Manage Add-ins. Outlook on the web opens in your browser.',
+    'Choose My add-ins. At the bottom, under Custom Addins, choose Add a custom add-in, then Add from File, and pick manifest.xml. Accept the prompts.',
+    'Wait. Microsoft says it can take up to 24 hours for the button to show in classic Outlook. Closing and reopening Outlook can help.',
+    'Open an email. The Add to HoneyDue-Flow button appears in the ribbon.',
+  ],
   installNeeds: 'You also need HoneyDue-Flow 1.2.0 or later running on this computer. Open its Settings, find Outlook Add-in and press Set up, once.',
 
   // Failure
