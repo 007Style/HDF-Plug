@@ -2,13 +2,14 @@
 
 This is the only interface between the Outlook add-in and HoneyDue-Flow (HDF). It is a small HTTP/JSON API served by HDF on the user's own computer. Both sides are built and tested against this file. `PLAN.md` explains why it exists and `RESEARCH.md` the facts behind it.
 
-Status: **draft, revision 2 (connect-with-Allow instead of a pairing code; single-step templates added). No code exists.**
+Status: **draft, revision 3 (transport changed from plain http to https after the Mac spike). No HDF code exists.**
 
 ## 1. Transport and rules
 
 | Item | Value |
 |---|---|
-| Address | `http://127.0.0.1:<port>`, port from `47615` to `47624` (first free one in HDF). Never `0.0.0.0` |
+| Address | `https://localhost:<port>`, port from `47615` to `47624` (first free one in HDF). Bound to the loopback address only, never `0.0.0.0`. **Plain `http` is not offered: Outlook on Mac refuses it (RESEARCH D)** |
+| Certificate | A self-signed certificate HDF creates for this computer (names: `localhost`, `127.0.0.1`; not a CA; key kept in HDF's user-data folder, never in the database or a backup). The user approves trust once. See PLAN H10 |
 | Format | JSON in, JSON out, `Content-Type: application/json; charset=utf-8` |
 | Version | Path prefix `/v1`. `hello` also returns `apiVersion` |
 | Auth | `Authorization: Bearer <token>` on everything except `hello` and `connect` |

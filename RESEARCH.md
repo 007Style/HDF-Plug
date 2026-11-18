@@ -79,7 +79,7 @@ Outlook add-ins hold no code on the user's machine: Outlook reads the manifest a
 ### A11. The add-in runs in a sandbox and in different web engines per platform. DOCUMENTED
 - Windows desktop Outlook uses **Microsoft Edge (Chromium) with WebView2**. Mac uses **Safari's engine, WKWebView**. Source: `concepts/browsers-used-by-office-web-add-ins.md`.
 - On Mac the add-in page is "hosted inside a sandboxed WebKit runtime host process"; in web clients it runs in an iframe with the HTML5 sandbox attribute. The page "can do almost anything a regular web page can do" but must follow the **same-origin policy**. Source: `concepts/privacy-and-security.md`.
-- Consequences: (1) the add-in **cannot read or write files** on the computer, so it cannot touch HDF's data files; (2) a call from the hosted page to a program on the same computer is a **cross-origin** web request, so the receiving side must answer with the right CORS headers (planned in `BRIDGE-API.md` section 1); (3) Safari/WKWebView is the stricter engine for calls from an `https://` page to plain `http://127.0.0.1`, which is why Mac is tested first in the spike.
+- Consequences: (1) the add-in **cannot read or write files** on the computer, so it cannot touch HDF's data files; (2) a call from the hosted page to a program on the same computer is a **cross-origin** web request, so the receiving side must answer with the right CORS headers (planned in `BRIDGE-API.md` section 1); (3) Safari/WKWebView is the stricter engine for calls from an `https://` page to plain `http://127.0.0.1`. **Confirmed by the spike: it refuses them (section D).**
 
 ## B. HoneyDue-Flow 1.1.0 findings (CODE)
 
@@ -133,10 +133,33 @@ Uncommitted changes exist in `src/db/backupFormat.ts`, `src/db/index.ts`, `src/d
 
 | # | Unknown | Why it matters |
 |---|---|---|
-| S1 | Whether any Outlook build can now disable a ribbon button, and exact types of `from`/`to` on a read item | Decides the "greyed button" design (A2) |
-| S2 | Whether a task pane served from public HTTPS can call a local server, in each client: new Outlook Windows (WebView2), new Outlook Mac (WKWebView), classic Windows, OWA | The whole design depends on this call. Mixed-content, private-network and loopback rules differ per engine |
-| S3 | Whether `https://localhost` with a locally trusted certificate is needed instead of plain `http://127.0.0.1` | Decides how much install friction there is |
+| S1 | Whether any Outlook build can now disable a ribbon button, and exact types of `from`/`to` on a read item | Decides the "greyed button" design (A2). **ANSWERED for Mac (section D)** |
+| S2 | Whether a task pane served from public HTTPS can call a local server, in each client: new Outlook Windows (WebView2), new Outlook Mac (WKWebView), classic Windows, OWA | The whole design depends on this call. Mixed-content, private-network and loopback rules differ per engine. **Mac: plain http fails, https works from a local origin. Still open: a page from a truly public origin, and every Windows client (section D)** |
+| S3 | Whether `https://localhost` with a locally trusted certificate is needed instead of plain `http://127.0.0.1` | Decides how much install friction there is. **ANSWERED for Mac: yes, https is needed (section D)** |
 | S4 | Whether Graph filters contacts by email address | Decides driver method design |
-| S5 | Whether `localStorage` in the task pane survives restarts in each client | Decides how often the user must re-pair |
+| S5 | Whether `localStorage` in the task pane survives restarts in each client | Decides how often the user must re-pair. **Partly: survives closing the pane; a full Outlook quit is still untested** |
 | S6 | The exact install menu steps in each client (sideload from file), and whether new Outlook on Windows needs a tenant setting | Written into `docs/INSTALL.md` from real testing |
-| S7 | Whether Outlook's side panel on each client may open a custom link `honeydue-flow://open` (via `Office.context.ui.openBrowserWindow` or a plain link) | Decides whether the "Open HoneyDue-Flow" button in the panel can exist |
+| S7 | Whether Outlook's side panel on each client may open a custom link `honeydue-flow://open` (via `Office.context.ui.openBrowserWindow` or a plain link) | Decides whether the "Open HoneyDue-Flow" button in the panel can exist. **Inconclusive, and dropped from v1 (section D)** |
+
+---
+
+## D. Phase 0 spike results (real Outlook, not documentation)
+
+Client: **Outlook for Mac 16.115.1108.0**, Safari engine (WebKit). Run 2026-11-16, two reports (a received and a sent-style message). Spike code is in `spike/` and is thrown away afterwards.
+
+| # | Test | Result | Meaning |
+|---|---|---|---|
+| S1 | `Office.ribbon` | `undefined` | A ribbon button cannot be greyed on Mac. Confirms the "message on click" design |
+| S1 | Mailbox API sets 1.1 to 1.13 | all supported | Pinning and `ItemChanged` are available |
+| S1 | `from` / `to` | `from` is an object with name and email; `to` is an array of objects with email | Sender and recipients can be read as planned |
+| S2a-c | Page on `https://localhost:47630` calls `http://127.0.0.1:47615` or `http://localhost:47615` | **All fail** ("Load failed"), with or without credentials headers | **A plain-http listener cannot be used on Mac** |
+| S3 | Page calls its own `https://localhost:47630` | **Works** (4 to 11 ms) with a certificate the user trusted | The https route works |
+| S2d/e | Page on `https://localhost:47630` calls `https://127.0.0.1:47630`, including a preflighted POST with `Authorization` | **Works** | Cross-origin https calls with CORS work in this engine. **Not yet proven for a page from a truly public origin** (the page here was itself local) |
+| S5 | `localStorage` counter | Kept counting across loads (2, then 4; the count rises on every page load and every press of "Run all tests", so it is not a pure load count). "First seen" stayed 23:14:55 across both reports | Storage survives closing and reopening the pane. A full Outlook quit has not been tested yet |
+| S7 | Click on `honeydue-flow://open` | Nothing visible happened | **Inconclusive.** No program on the machine is registered for that link yet (that is HDF change H9), so nothing could answer. Decision: the "Open HoneyDue-Flow" button is **dropped from v1**; the panel simply says to open HDF |
+
+### D1. Consequences
+1. HDF's listener must speak **https** on `localhost`, with a certificate the computer trusts. The user has to approve that trust once on each computer.
+2. **If HDF serves the add-in page itself (Plan B), then with HDF closed Outlook cannot load the page at all.** Outlook would show its own generic "can't load" message. The friendly "HoneyDue-Flow was not detected" panel could not be shown. That conflicts with a stated requirement. Keeping the page on a separate always-available web host avoids it, but needs a page from a public origin to be able to call `https://localhost`, which is **not yet proven** on any client.
+3. Tested only on Mac. Windows (WebView2, a Chromium engine with its own rules for public pages calling local addresses) is unknown.
+4. In the second report the sender and recipient were both a Gmail address while the mailbox was `daneyand@outlook.com`. "Which address is me" cannot rely on the mailbox address alone (PLAN risks).

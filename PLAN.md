@@ -36,6 +36,21 @@ Three things differ from what was imagined. All are in [`RESEARCH.md`](RESEARCH.
 | "Can't it **auto pair**?" | Yes, with no code typing. The first time, HDF shows one **Allow / Deny** prompt | Sections 8.3, 9; API 2.2. The bridge is now **on by default** |
 | Must support Outlook on **PC and Mac** | Mac moves from "if the spike passes" to a **release blocker** | Sections 3, 10, 13, 14. Plan B (4.1) is now more likely to be needed |
 | "Just **write to the database**? Put the server **inside the running HDF**? If HDF is not running, add to the database so it picks it up" | The listener **is** inside the running HDF (that was already the plan). Writing to the database from outside is not possible | Sections 4.2 (why), 4.3 (when HDF is not running) |
+| "Why host it anywhere? I will install it from my GitHub page" | Outlook always loads the panel from a web address, so the page must be served from somewhere. HDF itself can be that place | Section 4.1 |
+| "No greyed button needed. Show the reasons when it is clicked" | Matches what Outlook allows (spike S1 confirmed on Mac) | Sections 2, 5 |
+
+### 2.2 What the Phase 0 spike found on Outlook for Mac (revision 3)
+
+Full table in `RESEARCH.md` section D. In short:
+
+| Finding | Effect on the plan |
+|---|---|
+| The ribbon cannot be greyed (`Office.ribbon` is undefined) | Nothing: the plan already shows the reason in the panel |
+| Sender and recipients can be read | Nothing: works as planned |
+| **A plain `http://127.0.0.1` or `http://localhost` listener cannot be called** | **HDF's listener must be `https://localhost`** with a certificate the user trusts once. New change H10 |
+| An https page can call an https `localhost` listener, including a preflighted POST with a token | The API design holds, only the transport changes |
+| The page that calls HDF was itself on `localhost` in this test | **Open: does it still work from a page on a public web address?** |
+| `honeydue-flow://` link: nothing happened (nothing registered) | The "Open HoneyDue-Flow" button is dropped from v1 |
 
 ## 3. Scope
 
@@ -74,7 +89,7 @@ graph LR
 
     subgraph PC[Same computer]
         subgraph HDF[HoneyDue-Flow 1.2.0]
-            SRV[Small listener inside the running app, 127.0.0.1]
+            SRV[Small https listener inside the running app, localhost]
             REN[Renderer: DB and engine]
             SRV -- IPC --> REN
         end
@@ -84,7 +99,7 @@ graph LR
 
     PAGE -. loaded into .-> PANE
     PANE -- Office.js: reads from, to, mailbox address --> BTN
-    PANE -- HTTP on 127.0.0.1 with access token --> SRV
+    PANE -- HTTPS on localhost with access token --> SRV
 ```
 
 **Why this shape**
@@ -92,8 +107,22 @@ graph LR
 - All real work happens inside HDF, which owns the database (B1), the Microsoft sign-in (B3) and the rules (B4). The add-in is a thin remote control. That keeps the rules in one place and means the add-in cannot drift out of step with HDF.
 - Auth lives in the main process (a small `bridge.json` in the user-data folder holding only a **hash** of each approved token, so it can never end up in an exported backup). Data requests are passed to the renderer, which already has the database (B1).
 
-### 4.1 Fallback if spike S2 fails in a client
-Some Outlook web views may refuse a call from an `https://` page to `http://127.0.0.1` (mixed content or local-network rules). Fallback **Plan B**: HDF serves the add-in page itself from `https://localhost:<port>` with a certificate it creates and the user trusts once. The page and the API are then the same origin, which removes the problem. Cost: one certificate prompt at install, and a changed manifest URL. We only build Plan B if the spike shows we must. **Because Outlook on Mac is required, and Mac uses Safari's engine (WKWebView, RESEARCH A11), Plan B is quite likely to be needed there.** Phase 0 tests Mac first for that reason.
+### 4.1 Where the add-in page is served from (DECISION NEEDED, Q2/Q11)
+The Mac spike showed the listener must be https (section 2.2). That leaves two ways to serve the page Outlook shows in its panel:
+
+| | **A. Page on a public web host** (recommended) | **B. Page served by HDF itself** ("Plan B") |
+|---|---|---|
+| Where the page lives | A small static site, free on GitHub Pages if the `HDF-Plug` repository is public. It holds no data or secrets. HDF's own repository stays private | HDF serves it from `https://localhost:<port>` |
+| Manifest address | The public address | `https://localhost:<fixed port>` (one fixed port, not a range) |
+| Hosting needed | Yes, one free static host | **No** |
+| HDF closed | **Friendly message works**: the page loads from the web, finds no HDF, and says so (your requirement) | **Outlook cannot load the page at all and shows its own generic error.** The friendly message cannot be shown |
+| Page calling HDF | Cross-origin call from a public page to `https://localhost`. Works on Mac only if the test is repeated from a public origin; Windows unknown | Same origin, the simplest and safest call |
+| Updating the page | Publish a new version, everyone gets it | Ships inside each HDF release |
+| Extra install step | Certificate approval in HDF (both options) | Same |
+
+Recommendation: **A**, because the "HDF is not running" message is a stated requirement and only A can show it. **B** is the fallback if a page from a public origin turns out not to be allowed to call `https://localhost` on Windows or Mac. Phase 0 round 2 settles this (section 14).
+
+In both options the user approves the local certificate once (H10). The certificate is a single-purpose, self-signed server certificate for `localhost` that **cannot sign other certificates**, so it cannot be used to impersonate any other site.
 
 ### 4.2 Why the add-in cannot write to HDF's database directly
 1. **The add-in is sandboxed.** It runs in a web view inside Outlook and has no access to files on the computer. It can only make web requests (RESEARCH A11).
@@ -107,7 +136,7 @@ With HDF closed nothing can answer: nobody can look up the Outlook contact (that
 | Option | In v1? | What it is |
 |---|---|---|
 | A. **Start HoneyDue-Flow when I sign in** | **Yes** (change H9) | New HDF setting. HDF already hides to the tray when its window is closed, and its scheduler only works while it runs anyway, so this is a good setting on its own merits |
-| B. **Open HoneyDue-Flow** button in the panel | **Yes, if spike S7 passes** | HDF registers a link `honeydue-flow://open`. Whether Outlook's panel may open such a link on each client is unverified |
+| B. **Open HoneyDue-Flow** button in the panel | **No** (dropped; S7 inconclusive) | Would need HDF to register a `honeydue-flow://` link. The panel just tells the user to open HDF. Can be added later |
 | C. **Queue the request** and let HDF take it next time it opens | **No** (Q10) | The add-in cannot check the four fields or read HDF's flow list while HDF is closed, so mistakes would surface later and silently. The flow also could not start until HDF runs, because the scheduler only runs in the app. It can be added later; the API leaves room for it |
 
 ## 5. User experience
@@ -201,15 +230,16 @@ The honeyDue-Flow folder is its **own git repository**. All of this goes on a br
 |---|---|---|---|
 | H1 | **Pull the add-to-flow steps out of `App.tsx`** (`handleAddFlowSubmit`, lines 392 to 427) into one shared function (the cadence branch **and** the single-follow-up branch) used by the screen **and** the bridge | new `src/engine/addToFlow.ts`; `src/App.tsx` | Pure refactor, "no behavior change", existing tests must pass untouched. Do this first and ship it alone |
 | H2 | **Single-address lookup in the driver:** `lookupContactByEmail(email)` returns the Outlook contact or the missing fields | `src/drivers/types.ts`, `winDriver.ts`, `simDriver.ts`, `fakeDriver.ts`; `macDriver` answers "not supported" like it does for tasks | Reuses the four-field rule. Spike S4 decides filter versus cache |
-| H3 | **Bridge server** in the main process: HTTP on `127.0.0.1`, port range, endpoints in `BRIDGE-API.md`, request forwarding to the renderer | new `electron/bridge.ts`; `electron/main.ts` | Pure logic kept in `logic.ts` style so it can be tested without Electron |
+| H3 | **Bridge server** in the main process: **HTTPS** on the loopback address (name `localhost`), port range, endpoints in `BRIDGE-API.md`, request forwarding to the renderer | new `electron/bridge.ts`; `electron/main.ts` | Pure logic kept in `logic.ts` style so it can be tested without Electron |
 | H4 | **Connection approval and token store** (`bridge.json`, hashed tokens, revoke) | `electron/bridge.ts` | Never written into the database or into backups |
 | H5 | **IPC to the renderer:** `bridge-request` and `bridge-respond` | `electron/main.ts`, `electron/preload.ts`, `src/App.tsx` | Add the names to **both** approved lists (`ELE-33`, `ELE-45` fail otherwise). Add the matching `window.electronAPI` types (`X-STATIC-02`) |
 | H6 | **Settings card "Outlook add-in":** on/off switch (default **on**), the **Allow / Deny** prompt shown when an add-in asks to connect (window comes to the front, or a notification if hidden), list of connected add-ins with Revoke, port in use, status | `src/components/modals/SettingsModal.tsx` | Info (i) pop-ups follow F-49 |
 | H7 | **Read-only data operations** the bridge needs: list cadences (step count, first channel, `inactive_reason`) **and templates** (name, channel); schedule check using `checkScheduleTime` | `src/engine/addToFlow.ts` (calls existing `getCadences`, `checkScheduleTime`) | Reuses B6, no new rules |
 | H8 | **Docs and test plan:** Feature Register row, new case ids (prefix `BRG-` for bridge, `UI-SET-` for the card, `DRV-` for the lookup), manual checklist item for real Outlook, README and DESIGN sections, `npm run testplan:write` and `testplan:check` | `TESTPLAN.md`, `README.md`, `DESIGN.md`, `package.json` version | Per `AGENTS.md` rule 2 |
-| H9 | **"Start HoneyDue-Flow when I sign in"** setting (off by default, offered the first time the add-in is used) and the `honeydue-flow://open` link | `electron/main.ts`, `electron/preload.ts`, Settings card | Uses Electron's login-item and protocol-client features. HDF has neither today (RESEARCH B8). The link is only added if spike S7 shows Outlook can use it |
+| H9 | **"Start HoneyDue-Flow when I sign in"** setting (off by default, offered the first time the add-in is used) | `electron/main.ts`, `electron/preload.ts`, Settings card | Uses Electron's login-item feature. HDF has none today (RESEARCH B8). The `honeydue-flow://open` link was dropped from v1 (RESEARCH D) |
+| H10 | **Local certificate:** HDF creates a self-signed certificate for `localhost` and `127.0.0.1` (not a CA, key never leaves the user-data folder, never in the database or a backup), asks the user to approve trust once, and renews it before it expires | new `electron/bridgeCert.ts`; Settings card shows status and a "Remove trust" button | Mac: trust in the user's own keychain (one password prompt). Windows: current-user trusted store (one confirmation). The exact commands, and what happens when the user refuses, are settled in Phase 0 round 2. Uses the system's own tools, no new dependency if avoidable |
 
-Existing safeguards stay: the Electron window keeps `sandbox`, `contextIsolation` and its CSP (the bridge runs in the main process, B5). The static audit allows `http://127.0.0.1` (`X-STATIC-01`).
+Existing safeguards stay: the Electron window keeps `sandbox`, `contextIsolation` and its CSP (the bridge runs in the main process, B5). The listener is https, so the `http://` allowance in `X-STATIC-01` is not needed; Phase 1 re-checks that rule and `ELE-33`/`ELE-45`.
 
 ## 8. Work stream A: the add-in (in `HDF-Plug/`)
 
@@ -246,7 +276,7 @@ HDF-Plug/
 
 ### 8.3 How the panel behaves
 - **Pinnable task pane** (`SupportsPinning`, requirement set 1.5). It stays open while the user clicks through messages. On each `ItemChanged` event it re-reads the item, then re-asks HDF. `item` can be `null` and the code must cope (RESEARCH A4).
-- **Port discovery:** the add-in tries a fixed range of ports (proposed `47615` to `47624`) on `127.0.0.1`, calling `/v1/hello` with a 1.5 second timeout each, and remembers the working one. It checks that the answer says `app: "HoneyDue-Flow"`.
+- **Port discovery (option A):** the add-in tries a fixed range of ports (proposed `47615` to `47624`) on `https://localhost`, calling `/v1/hello` with a 1.5 second timeout each, and remembers the working one. It checks that the answer says `app: "HoneyDue-Flow"`. With option B there is one fixed port and no discovery.
 - **Connecting (auto pair):** the add-in asks HDF to connect, HDF shows **Allow / Deny**, and the user clicks **Allow** once. Nothing is typed. The add-in stores the returned token in the pane's `localStorage`. Spike S5 shows how long it survives in each client; if a client loses it, that client simply asks again (state 3), which is the safe failure.
 - **Time handling:** the date and time pickers work in local time. The add-in sends an ISO string, as HDF's own Add Flow modal does. The default is 30 minutes from now, same as HDF.
 - **Schedule warning:** the add-in sends the chosen time to `schedule-check` and shows HDF's warning (past, or held by business hours or the weekend shield). It never reimplements the rules.
@@ -257,13 +287,13 @@ HDF-Plug/
 The bridge opens a door on the user's machine, so it is locked in layers. Each item becomes a test.
 
 1. **On by default, switchable off in Settings.** Until an add-in is approved, the port answers only `hello` and a connect request. Nothing else is reachable without a token.
-2. **Bound to `127.0.0.1` only**, never `0.0.0.0`.
+2. **Bound to the loopback address only**, never `0.0.0.0`. **https only**, with a single-purpose certificate (H10).
 3. **Origin allow-list.** Only the add-in's own origin is accepted (set in HDF from a constant; the CORS header names that origin, never `*`). Other origins get no CORS headers.
 4. **Host header check** (`127.0.0.1:<port>` or `localhost:<port>`) to defeat DNS rebinding.
 5. **Approve-once connection + bearer token.** The add-in asks to connect and HDF shows **Allow / Deny**. Only on Allow is a token issued. The token is 256 random bits and only its **hash** is stored. A request from a wrong origin gets no prompt at all. One request at a time; after 3 denials or time-outs further requests are refused for 10 minutes. Why this is safe enough: a web page cannot forge its Origin, which stops other websites; another program on the same computer could forge it, but still cannot get a token without the user clicking Allow.
 6. **Smallest possible surface.** The API can only: say hello, ask to connect, check a contact, list flow choices, check a time, and add a flow. It cannot read the contact list, template text, notes, tokens or settings, and cannot send mail.
-7. **Local network permission headers.** Browsers that ask permission for a public page to reach the local network need `Access-Control-Allow-Private-Network: true` on the preflight reply (S2 confirms which engines need it).
-8. **Privacy.** The page is static and sends nothing anywhere except to `127.0.0.1`. No analytics. Logs in HDF record that a request happened, not the email addresses (HDF's rule for logs).
+7. **Local network permission headers.** Browsers that ask permission for a public page to reach the local network need `Access-Control-Allow-Private-Network: true` on the preflight reply. Not needed on Mac in the spike; Windows engines are tested in round 2.
+8. **Privacy.** The page is static and sends nothing anywhere except to the local HDF. No analytics. Logs in HDF record that a request happened, not the email addresses (HDF's rule for logs).
 9. **Revoke.** Settings can revoke any connected add-in, and switching the bridge off closes the port at once.
 
 ## 10. Test strategy
@@ -299,6 +329,7 @@ HDF's rule is that the test plan is the source of truth, and a feature is not do
 - **Source and hosting are two different things.** Your **source code** lives in a GitHub repository, as you said. **Hosting** is where the *finished* add-in page is served from while people use it.
 - **Why hosting is needed at all:** Outlook never keeps an add-in's program on your computer. The manifest holds a web address, and Outlook opens that address inside the side panel each time, like a browser tab (RESEARCH A10). So the built page (a few HTML, script and style files) must sit at a public `https://` address.
 - **What GitHub Pages is:** a GitHub feature that publishes built files from a repository as a website, at `https://<account>.github.io/<repo>/`, for free, with HTTPS. A GitHub Action would build and publish on every release. The page holds no data and no secrets, so a public page is fine.
+- **Update after the Mac spike:** hosting is needed only if you choose option A in section 4.1. If you choose B, HDF serves the page and none of the rest of this section about hosting applies.
 - **A catch:** the `007Style/honeyDue-Flow` repository returns "not found" to anonymous requests, so it appears to be **private**. As far as I know, GitHub Pages on a private repository needs a paid GitHub plan. I could not check your plan. Options, in the order I would try them: (1) `HDF-Plug` source repo public, Pages free; (2) private source repo on a paid plan, Pages from it; (3) a tiny public repo containing only the built files; (4) another free static host (Cloudflare Pages, Netlify); (5) Plan B (4.1), where HDF serves the page itself and no hosting is needed. Decision Q2.
 - **User install (v1):** download `manifest.xml`, then in Outlook open **Get Add-ins, My add-ins, Custom add-ins, Add from file**. Exact menu names differ by client and are written up from real testing in `docs/INSTALL.md` (spike S6).
 - **Organization install:** an administrator uploads the manifest in the Microsoft 365 admin center (Integrated apps).
@@ -317,7 +348,9 @@ A web page cannot tell "not installed" from "installed but not running". So the 
 
 | Risk | Likelihood | Effect | Handling |
 |---|---|---|---|
-| An Outlook web view blocks the call from the hosted page to `127.0.0.1` | **Medium on Windows, higher on Mac. The biggest unknown** | Plan B needed (Mac is required, so "unsupported" is not an option) | Phase 0 spike S2 across clients **before** any real work. Plan B in 4.1 |
+| An Outlook web view blocks the call from the page to HDF | **Mac: happened for plain http, https works from a local page. Windows and public-origin: unknown. Still the biggest unknown** | Option B (page served by HDF) loses the friendly "HDF not running" message | Phase 0 round 2 on Windows and with a public origin. Section 4.1 |
+| User refuses the certificate approval | Medium | The add-in cannot work on that computer | The panel and Settings explain why it is needed and how to approve it later; nothing else in HDF is affected |
+| The user's own address is not the mailbox address (a Gmail alias on an Outlook.com mailbox, seen in the spike) | Medium | The add-in may offer the user as the person, then say "not in contacts" | v1 treats the mailbox address and HDF's signed-in address as "me"; an alias list can come later |
 | Outlook cannot grey a ribbon button | **Certain by docs** | Design change already made | Reason is shown in the pane; no greyed control (section 2) |
 | HDF's database is in the renderer, so a hidden or crashed window cannot answer | Low | Requests time out | 10 second timeout, state 1 text, the renderer keeps running while hidden (B1) |
 | Graph cannot filter contacts by email | Medium | Slower lookup | Use a short-lived cache from the full read HDF already does (S4) |
@@ -334,7 +367,7 @@ A web page cannot tell "not installed" from "installed but not running". So the 
 
 | Phase | What | Output | Exit test |
 |---|---|---|---|
-| **0. Spike** (throwaway code, 1 to 2 days) | A one-button pane and a tiny local server. Answer **S1 to S7** in `RESEARCH.md` section C, **Mac first** | A filled-in matrix: which clients can call the local server, how the call must be made, whether storage survives | S2 answered for **new Outlook on Windows and Outlook on Mac**. If it fails in either, Plan B (4.1) becomes part of v1 and the plan is revised before Phase 1 |
+| **0. Spike** (throwaway code) | Round 1 **done on Mac** (`RESEARCH.md` section D). **Round 2:** run on new Outlook for **Windows**; repeat the Mac test from a page on a **public web address**; quit-and-reopen Outlook storage check; settle the certificate commands (H10) | A filled-in matrix for Mac and Windows | Decision between options A and B (section 4.1) recorded, and this plan revised before Phase 1 |
 | **1. HDF bridge** (honeyDue-Flow repo) | H1 first and shipped alone, then H2 to H9 | HDF 1.2.0 with the bridge (on by default, switchable off) and a passing test plan | `npm run verify` green, `testplan:check` clean, BRG cases `DONE` |
 | **2. Add-in** | Section 8, built against `tools/fake-bridge` first, then the real HDF | Working panel for all 15 states | Add-in tests green, manual matrix rows 1 and 2 (Windows and Mac) pass |
 | **3. Install and hosting** | Manifest, hosting, `INSTALL.md`, org deploy notes | A stranger can install it from the doc | Clean-machine install test |
@@ -349,7 +382,8 @@ Each has a default so work is not blocked. Reply only where you disagree.
 | # | Question | Default |
 |---|---|---|
 | Q1 | Cadences only, or also single-step templates? | **Decided by you: both** (section 3) |
-| Q2 | Where does the finished page get hosted? (section 11) | GitHub Pages if your plan allows it for this repo, otherwise option 3 or 4 in section 11. **Need to know: public or private repo, and your GitHub plan** |
+| Q2 | Where does the finished page get hosted? (sections 4.1, 11) | Only matters for option A. GitHub Pages from a **public** `HDF-Plug` repository (free). **Need to know: are you happy for `HDF-Plug` to be a public repository?** HDF's own repository is unaffected |
+| Q11 | Option A (public page, friendly "HDF not running" message) or option B (HDF serves the page, no hosting, Outlook's own error when HDF is closed)? (section 4.1) | **A**, with B as the fallback |
 | Q3 | Auto connect? | **Decided by you.** Implemented as one **Allow** click in HDF the first time, bridge on by default (sections 8.3, 9). Reply only if you want it fully silent with no click; the cost is that any local program could then add contacts to flows |
 | Q4 | Outlook on Mac? | **Decided by you: required** |
 | Q5 | The panel calls them **"flows"** (your wording) although HDF's tab says **Cadences**. Keep "flow" in the add-in? | Yes |
@@ -383,6 +417,6 @@ Each has a default so work is not blocked. Reply only where you disagree.
 
 ## 17. What happens next
 
-1. You review this revision and `BRIDGE-API.md`. The one open question that needs an answer is **Q2** (hosting); the rest have defaults.
-2. On approval, **Phase 0 (spike)** starts. It is the only thing that can overturn the design, so it comes first.
+1. Phase 0 round 1 is done on Mac. Your decision on **Q11 / Q2** (section 4.1) is the only open question; the rest have defaults.
+2. **Phase 0 round 2** (Windows, public-origin page, Outlook full-quit storage check, certificate commands) settles option A versus B. It is the last thing that can overturn the design.
 3. Nothing is added to `honeyDue-Flow` until Phase 1, and then only on a branch. HDF 1.1.1 is now committed and tagged (v1.1.1); the bridge ships as 1.2.0.
