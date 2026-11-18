@@ -2,7 +2,7 @@
 
 This is the only interface between the Outlook add-in and HoneyDue-Flow (HDF). It is a small HTTP/JSON API served by HDF on the user's own computer. Both sides are built and tested against this file. `PLAN.md` explains why it exists and `RESEARCH.md` the facts behind it.
 
-Status: **revision 6. Every endpoint in this file is built and tested in HDF 1.2.0 (branch `feature/outlook-bridge`; tests `BRG-`) and used by the add-in (tests `PLG-`). Changes since revision 5: a new `502 contacts_unavailable`, the window time-out is 25 seconds, and a `check` of a person already in a flow with no readable cadence name returns an empty `flow` object.**
+Status: **revision 6. Every endpoint in this file is built and tested in HDF 1.2.0 (release v1.2.0; tests `BRG-`) and used by the add-in (tests `PLG-`). Changes since revision 5: a new `502 contacts_unavailable`, the window time-out is 25 seconds, and a `check` of a person already in a flow with no readable cadence name returns an empty `flow` object.**
 
 ## 1. Transport and rules
 
