@@ -145,7 +145,7 @@ Uncommitted changes exist in `src/db/backupFormat.ts`, `src/db/index.ts`, `src/d
 
 ## D. Phase 0 spike results (real Outlook, not documentation)
 
-Client: **Outlook for Mac 16.115.1108.0**, Safari engine (WebKit). Run 2026-11-16, two reports (a received and a sent-style message). Spike code is in `spike/` and is thrown away afterwards.
+Client: **Outlook for Mac 16.115.1108.0**, Safari engine (WebKit). Run 2026-11-16, two reports (a received and a sent-style message). The spike code was throwaway and has been deleted; the results below are the record.
 
 | # | Test | Result | Meaning |
 |---|---|---|---|
@@ -182,4 +182,4 @@ Still not shown by this test:
 1. HDF's listener must speak **https** on `localhost`, with a certificate the computer trusts. The user has to approve that trust once on each computer.
 2. **The page must come from a web address, not from HDF.** If HDF served it, then with HDF closed Outlook could not load the page and would show its own generic error, so the "HoneyDue-Flow was not detected" message could not appear. Decision (PLAN 4.1): hosted page on GitHub Pages. Whether a page from a real web address may call `https://localhost` is **not yet proven** (round 2).
 3. Tested only on Mac. Windows (WebView2, a Chromium engine with its own rules for public pages calling local addresses) is unknown.
-4. In the second report the sender and recipient were both a Gmail address while the mailbox was `daneyand@outlook.com`. "Which address is me" cannot rely on the mailbox address alone (PLAN risks).
+4. In the second report the sender and recipient were both a Gmail address while the mailbox was an Outlook.com address. "Which address is me" cannot rely on the mailbox address alone (PLAN risks).

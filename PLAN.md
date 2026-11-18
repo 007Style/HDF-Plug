@@ -377,7 +377,7 @@ Phase 0 is **closed** (decided by you, revision 6). It answered what documentati
 
 | Phase | What | Output | Exit test |
 |---|---|---|---|
-| **0. Spike** | **Closed.** Round 1 and 1b on Mac. Throwaway code in `spike/`, deleted before the repo goes public | `RESEARCH.md` sections D and D0 | Done |
+| **0. Spike** | **Closed.** Round 1 and 1b on Mac. Throwaway code, since deleted | `RESEARCH.md` sections D and D0 | Done |
 | **1. Walking skeleton** (the riskiest path, end to end, small) | **HDF:** the H1 refactor shipped alone, then a minimal `bridge` with `hello` and `connect` (the Allow prompt) over https, with the certificate (H3, H4, H10, part of H6) on a branch. **Add-in:** the real project scaffold, a manifest, and a panel that shows states 1 (not detected), 3 (connect) and "connected", **published to GitHub Pages**. Real repository created | You install the manifest, open the panel in Outlook, and it finds the running HDF, shows the Allow prompt, and connects | Works on **Mac (new Outlook)** from the real GitHub Pages address, with the real certificate approval. If Mac blocks it, the plan is revised **now**, with working code to adapt. Windows is not part of this exit test |
 | **2. HDF bridge, rest** | H2, H5 to H9 and the remaining endpoints in `BRIDGE-API.md`; Feature Register rows, test cases, docs | HDF 1.2.0 release candidate | `npm run verify` green, `testplan:check` clean, BRG cases `DONE` |
 | **3. Add-in, rest** | Section 8: all 15 states, flow picker with search, date and time, success and errors; built against `tools/fake-bridge` first, then the real HDF | Working panel | Add-in tests green; all states work on **Mac (new Outlook)** |
@@ -430,7 +430,7 @@ Each has a default so work is not blocked. Reply only where you disagree.
 | Works on PC **and Mac** | Classic Outlook on Windows and new Outlook on Mac, both release blockers |
 | Public repository is documented to the author's standard | Documentation checklist (section 18), a gate before the repository is made public |
 | Connects automatically (no typing) | State 3 test + `BRG-P` cases; matrix |
-| No code written until the plan is complete | You approved the plan and said we know enough to start (revision 6). Only the throwaway `spike/` code exists so far |
+| No code written until the plan is complete | You approved the plan and said we know enough to start (revision 6). Only throwaway spike code existed at that point (now deleted) |
 
 ## 17. What happens next
 
@@ -448,7 +448,7 @@ Each has a default so work is not blocked. Reply only where you disagree.
    - **`honeyDue-Flow`:** a branch `feature/outlook-bridge` from the tagged `v1.1.1`. H1 first (alone), then the minimal bridge and certificate.
 3. You test the slice on **Mac (new Outlook)** only. The result is recorded in `RESEARCH.md`. A block on Mac revises the plan before Phase 2. Windows classic is tested later, at the Windows gate (Phase 3b).
 4. Every HDF change follows its `AGENTS.md` Feature Gate: Feature Register row, test cases with ids and status `TODO`, tests in the same change, `testplan:write` then `testplan:check`, IPC names in both approved lists.
-5. The `spike/` folder is deleted before the repository is made public.
+5. The spike folder has been deleted (done, before the repository was made public).
 
 ## 18. Documentation for the public repository
 
