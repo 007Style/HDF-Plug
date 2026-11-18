@@ -1,0 +1,113 @@
+HDF-PLUG PROPRIETARY COMMERCIAL LICENSE
+Version 1.0
+
+Copyright (c) 2026 Daneyand. All rights reserved.
+
+This is a legal agreement between you ("Licensee") and Daneyand ("Licensor")
+for the HDF-Plug software (the HoneyDue-Flow add-in for Outlook), including its source code, compiled binaries,
+installers, documentation, tests, graphics and any updates (together, the
+"Software"). By downloading, copying, installing, running or otherwise using
+the Software you accept this license. If you do not accept it, do not use the
+Software and delete every copy you hold.
+
+1. OWNERSHIP
+   The Software is licensed, not sold. The Licensor keeps all right, title and
+   interest in the Software, including all copyright and other intellectual
+   property rights. No right is granted except those stated in this license.
+
+2. NO LICENSE WITHOUT WRITTEN AGREEMENT
+   Except for a written agreement signed or otherwise expressly confirmed by
+   the Licensor (an "Authorization"), no one has any right to use the
+   Software. Access to this repository, to a release, or to a download link
+   does not by itself grant a license. An Authorization may be limited in
+   time, in number of users or devices, and in purpose, and may require
+   payment of fees.
+
+3. WHAT AN AUTHORIZED LICENSEE MAY DO
+   Subject to this license and to the terms of the Authorization, an
+   authorized Licensee may install and run the compiled Software on the
+   number of devices the Authorization allows, for the Licensee's own
+   internal business purposes, and may make one backup copy of the compiled
+   Software for archival use.
+
+4. RESTRICTIONS
+   Unless the Licensor has given separate written permission, no one may:
+   a. copy, modify, translate, adapt or create derivative works of the
+      Software or any part of it;
+   b. distribute, publish, sublicense, sell, rent, lease, lend, host,
+      or otherwise make the Software available to any third party,
+      including as part of a service, product or open-source project;
+   c. reverse engineer, decompile, disassemble or attempt to derive the
+      source code of the compiled Software, except where applicable law
+      allows this despite this restriction;
+   d. remove, hide or change any copyright, license or attribution notice;
+   e. use the Software, its source code or its design to build, train or
+      improve a competing product or service;
+   f. use the Software or its source code to train or fine-tune a machine
+      learning model;
+   g. circumvent any technical limit or license check in the Software;
+   h. use the Software in violation of any law, or in violation of the
+      terms of any mail, calendar or social service it connects to.
+
+5. PUBLIC REPOSITORY AND SOURCE CODE
+   This repository and the add-in page published from it are publicly
+   visible so that people can read, audit and install the add-in. Seeing,
+   reading or downloading the source code does not give any right to use,
+   copy, modify or redistribute it. The restrictions in Section 4 apply to
+   everyone, whether or not they have access to the source code. Nothing
+   here is open-source software.
+
+6. THIRD-PARTY COMPONENTS
+   The Software includes third-party open-source components (for example
+   React, Tailwind CSS and Vite). They
+   remain under their own licenses, which are listed in the
+   package files of this repository.
+   Nothing in this license restricts the rights you hold in those components
+   under their own licenses.
+
+7. YOUR DATA AND THIRD-PARTY SERVICES
+   The Software stores no contact data of its own. It passes requests between
+   Outlook and HoneyDue-Flow on the Licensee's own computer. The Licensor
+   does not receive that data. The add-in page itself is served as static
+   files from GitHub Pages, which receives the ordinary web requests for
+   those files. The Licensee is solely responsible for the
+   contacts it imports, for the messages it sends, and for obeying
+   anti-spam, privacy, marketing and data-protection laws (for example
+   CAN-SPAM, GDPR and CASL) and the terms of the services it connects to.
+
+8. TERMINATION
+   This license ends automatically and without notice if the Licensee breaks
+   any of its terms. The Licensor may also end an Authorization as that
+   Authorization says. On termination the Licensee must stop using the
+   Software and delete all copies. Sections 1, 4, 5, 9, 10 and 11 survive
+   termination.
+
+9. NO WARRANTY
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+   PARTICULAR PURPOSE, ACCURACY AND NON-INFRINGEMENT. THE LICENSOR DOES NOT
+   WARRANT THAT THE SOFTWARE WILL BE ERROR-FREE OR THAT IT WILL SEND,
+   RECEIVE, SCHEDULE OR STOP ANY MESSAGE CORRECTLY.
+
+10. LIMITATION OF LIABILITY
+   TO THE MAXIMUM EXTENT ALLOWED BY LAW, THE LICENSOR IS NOT LIABLE FOR ANY
+   INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL OR PUNITIVE DAMAGES, OR FOR
+   LOST PROFITS, LOST DATA, LOST BUSINESS OR DAMAGE TO REPUTATION, ARISING
+   FROM THE USE OF OR INABILITY TO USE THE SOFTWARE, EVEN IF TOLD OF THE
+   POSSIBILITY. THE LICENSOR'S TOTAL LIABILITY FOR ANY CLAIM IS LIMITED TO
+   THE AMOUNT THE LICENSEE PAID FOR THE SOFTWARE IN THE TWELVE MONTHS BEFORE
+   THE CLAIM, OR ZERO IF NOTHING WAS PAID.
+
+11. REMEDIES
+   The Licensee agrees that a breach of Section 4 would cause the
+   Licensor harm that money cannot fully repair, and that the Licensor may
+   seek an injunction in addition to any other remedy.
+
+12. GENERAL
+   This license and any Authorization are the entire agreement about the
+   Software. If a part is found unenforceable, the rest stays in force. The
+   Licensor's failure to enforce a term is not a waiver of it. The Licensee
+   may not assign this license without the Licensor's written consent.
+
+For licensing requests, contact the Licensor through the GitHub account
+007Style.
