@@ -215,3 +215,12 @@ Proven in a real Outlook, against HDF 1.2.0 (from HDF's own log):
 - **Add from URL** is greyed out on this Mac (see above); **Add from File** works.
 
 Still unproven: adding a person who is in Contacts with all four fields (the form, the flow list, OK, In Flow); whether the saved connection survives a full Outlook quit; the unknown-sender case where the sender is the user's own second address (the test email was from the user's own Gmail address while the mailbox is Outlook.com).
+
+## Add to a flow works end to end on Mac new Outlook (2026-11-18)
+
+From HDF's log, in one session: `contacts/check`, `flow-options`, `schedule/check` and `POST /v1/flows` all answered 200 for a person on a **sent** email, and the user confirmed the person appeared in a flow.
+
+- The panel also worked with several recipients on a sent email.
+- A first attempt looked stuck: the screen read "No flow matches that search" with OK greyed. The log shows no `schedule/check` call at that point, so no flow had been chosen yet and OK was greyed by design ("Choose a flow to continue"). The cause of the "no match" text was not confirmed; it appears when the search box holds text that matches nothing.
+- **Not yet checked:** whether the connection survives a full quit of Outlook; the person then showing as "already in a flow" after Done; the not-in-contacts case on a received email.
+- **Asked for, cannot be built as asked:** a button on a contact in the People view. Microsoft's add-in documentation says add-ins activate only when reading or composing a message or appointment, not on other item types.
