@@ -17,7 +17,11 @@ export const App: React.FC<{ panel: Panel; session?: Session }> = ({ panel, sess
   }, [panel]);
 
   return (
-    <main className="p-3 max-w-xl mx-auto">
+    <main className="p-3 max-w-xl mx-auto space-y-3">
+      <header className="flex items-center gap-2" data-testid="panel-header">
+        <img src={`${import.meta.env.BASE_URL}assets/bee-80.png`} alt="" width={28} height={28} className="rounded-md" />
+        <span className="text-sm font-semibold text-gray-700">{TEXTS.title}</span>
+      </header>
       <View state={state} panel={panel} session={session} />
     </main>
   );

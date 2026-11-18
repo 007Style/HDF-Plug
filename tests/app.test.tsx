@@ -30,6 +30,15 @@ describe('PLG-U: what the panel shows', () => {
     expect(panel.refresh).toHaveBeenCalledTimes(1);
   });
 
+  it.each<PanelState>([
+    { kind: 'checking' }, { kind: 'not-detected' }, { kind: 'not-connected', notice: '' }, { kind: 'connected', appVersion: '1.2.0' },
+  ])('PLG-U00 %j: the panel always shows the HoneyDue-Flow icon and name at the top, so the user knows where they are', (state) => {
+    render(<App panel={fakePanel(state).panel} />);
+    const head = screen.getByTestId('panel-header');
+    expect(head.querySelector('img')).toHaveAttribute('src', '/HDF-Plug/assets/bee-80.png');
+    expect(head).toHaveTextContent(TEXTS.title);
+  });
+
   it('PLG-U02 not detected: offers the download link, opening in a new tab', () => {
     render(<App panel={fakePanel({ kind: 'not-detected' }).panel} />);
     const a = screen.getByRole('link', { name: TEXTS.download });

@@ -10,7 +10,7 @@
 [![Works with](https://img.shields.io/badge/works%20with-HoneyDue--Flow%201.2.0-F5A623?style=for-the-badge)](https://github.com/007Style/honeyDue-Flow)
 [![Outlook](https://img.shields.io/badge/Outlook-Mac%20%C2%B7%20Windows%20%C2%B7%20web-0078D4?style=for-the-badge)](#️-which-outlook-is-supported)
 [![License](https://img.shields.io/badge/license-proprietary-D0021B?style=for-the-badge)](#-license)
-[![Tests](https://img.shields.io/badge/tests-167%20passing-2EA44F?style=for-the-badge)](#-testing)
+[![Tests](https://img.shields.io/badge/tests-171%20passing-2EA44F?style=for-the-badge)](#-testing)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 
