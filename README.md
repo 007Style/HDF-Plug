@@ -10,7 +10,7 @@
 [![Works with](https://img.shields.io/badge/works%20with-HoneyDue--Flow%201.2.0-F5A623?style=for-the-badge)](https://github.com/007Style/honeyDue-Flow)
 [![Outlook](https://img.shields.io/badge/Outlook-Mac%20%C2%B7%20Windows%20%C2%B7%20web-0078D4?style=for-the-badge)](#️-which-outlook-is-supported)
 [![License](https://img.shields.io/badge/license-proprietary-D0021B?style=for-the-badge)](#-license)
-[![Tests](https://img.shields.io/badge/tests-155%20passing-2EA44F?style=for-the-badge)](#-testing)
+[![Tests](https://img.shields.io/badge/tests-156%20passing-2EA44F?style=for-the-badge)](#-testing)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 
@@ -491,9 +491,12 @@ The two sides can be updated **one at a time**. The connection has its own versi
 | [`PLAN.md`](PLAN.md) | The project plan, every decision and why, the phases, the risks and the acceptance checklist |
 | [`BRIDGE-API.md`](BRIDGE-API.md) | The exact contract between the add-in and HoneyDue-Flow: every address, field and error |
 | [`RESEARCH.md`](RESEARCH.md) | What was checked, how it was checked, and how sure we are, including the Outlook for Mac tests |
+| [`docs/INSTALL.md`](docs/INSTALL.md) | Install steps, written from real installs |
+| [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md) | What each message means and what to do about it |
+| [`docs/SECURITY.md`](docs/SECURITY.md) | What the add-in can reach, what it sends, and the certificate |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | How the panel is built and how its parts fit together |
+| [`AGENTS.md`](AGENTS.md) | Rules for anyone (or any assistant) changing this repository |
 | [`LICENSE`](LICENSE) | The license |
-
-Planned and not written yet: `docs/INSTALL.md` (install steps written from real installs), `docs/TROUBLESHOOTING.md`, `docs/SECURITY.md`, `docs/ARCHITECTURE.md`, and `AGENTS.md`.
 
 HoneyDue-Flow's own documents are in its [repository](https://github.com/007Style/honeyDue-Flow).
 

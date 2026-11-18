@@ -224,3 +224,7 @@ From HDF's log, in one session: `contacts/check`, `flow-options`, `schedule/chec
 - A first attempt looked stuck: the screen read "No flow matches that search" with OK greyed. The log shows no `schedule/check` call at that point, so no flow had been chosen yet and OK was greyed by design ("Choose a flow to continue"). The cause of the "no match" text was not confirmed; it appears when the search box holds text that matches nothing.
 - **Not yet checked:** whether the connection survives a full quit of Outlook; the person then showing as "already in a flow" after Done; the not-in-contacts case on a received email.
 - **Asked for, cannot be built as asked:** a button on a contact in the People view. Microsoft's add-in documentation says add-ins activate only when reading or composing a message or appointment, not on other item types.
+
+## The panel followed the open email correctly (2026-11-18)
+
+After a report of a "stale warning", the panel was changed to show which address it read ("Read from a received email: ..."). It read `[personal address]`, and HDF named the Outlook contact that holds that address as already in a flow. The user confirmed that was correct. Opening another email re-reads it, so `ItemChanged` works on Mac new Outlook.
