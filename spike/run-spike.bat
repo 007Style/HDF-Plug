@@ -46,18 +46,19 @@ if errorlevel 1 (
 )
 
 echo.
-echo == Next: install the add-in in Outlook
-echo 1. A browser page (aka.ms/olksideload) is opening. Sign in if asked.
-echo 2. The "Add-Ins for Outlook" box appears after a few seconds. Click "My add-ins".
-echo 3. At the bottom, under "Custom Addins", click "Add a custom add-in", then "Add from File".
-echo 4. Choose manifest.xml from this folder and accept the warning.
-echo    (Classic Outlook can take up to 24 hours to show a sideloaded add-in. New Outlook is quicker.)
-echo 5. Open an email in Outlook, find "HDF Spike" in the toolbar (or under "..."), click it.
-echo 6. Press "Copy report" in the side panel and paste the text into the chat.
+echo == The spike server is running
+echo.
+echo If the HDF Spike add-in is ALREADY installed in Outlook, you are ready:
+echo   open an email, click HDF Spike (close and reopen the panel to load the latest page),
+echo   press "Copy report", and paste it into the chat. Nothing to do in a browser.
+echo.
+echo Only on a machine where it is NOT installed yet (first time):
+echo   1. Open https://aka.ms/olksideload in a browser and sign in if asked.
+echo   2. My add-ins - Custom Addins - Add a custom add-in - Add from File.
+echo   3. Choose manifest.xml from this folder (spike\manifest.xml).
+echo   (Classic Outlook can take up to 24 hours to show a sideloaded add-in.)
 echo.
 echo Leave this window open while testing. Close it to stop.
 echo.
-explorer /select,"%~dp0manifest.xml"
-start "" "https://aka.ms/olksideload"
 node server.mjs
 pause

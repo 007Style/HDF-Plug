@@ -11,7 +11,7 @@ It needs only Node (no `npm install`). It makes **no change to honeyDue-Flow** a
 | Test pane pages (https) | `https://localhost:47630` | Plan B (HDF serves the page) |
 
 ## Quick way
-Mac: double-click `run-spike.command` (first time: right-click, Open, Open). Windows: double-click `run-spike.bat`. They do steps 1 to 3 below and open the install page.
+Mac: double-click `run-spike.command` (first time: right-click, Open, Open). Windows: double-click `run-spike.bat`. They do steps 1 to 3 below. They do not open a browser: use `https://aka.ms/olksideload` yourself, and only the first time on a machine.
 
 ## Round 1b: the clean http-versus-https test
 Same listener, same port 47615, same code. The page now runs block **T1** first (lines starting `T1a` to `T1g`): `http` and `https`, on `127.0.0.1` and `localhost`, with and without an `Authorization` header. If every `http` line fails and every `https` line passes, plain http is what Outlook blocks and HDF's listener needs a certificate. If the `http` lines pass, HDF needs no certificate here.

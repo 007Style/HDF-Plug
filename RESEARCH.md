@@ -158,6 +158,26 @@ Client: **Outlook for Mac 16.115.1108.0**, Safari engine (WebKit). Run 2026-11-1
 | S5 | `localStorage` counter | Kept counting across loads (2, then 4; the count rises on every page load and every press of "Run all tests", so it is not a pure load count). "First seen" stayed 23:14:55 across both reports | Storage survives closing and reopening the pane. A full Outlook quit has not been tested yet |
 | S7 | Click on `honeydue-flow://open` | Nothing visible happened | **Inconclusive.** No program on the machine is registered for that link yet (that is HDF change H9), so nothing could answer. Decision: the "Open HoneyDue-Flow" button is **dropped from v1**; the panel simply says to open HDF |
 
+### D0. Round 1b: the clean http-versus-https test (2026-11-18, Outlook for Mac 16.115)
+One fake HDF listener, one port (47615), one handler. Only the scheme changed.
+
+| Test | Result |
+|---|---|
+| T1a GET `http://127.0.0.1:47615` | **FAIL** (Load failed) |
+| T1b GET `https://127.0.0.1:47615` | OK, 13 ms |
+| T1c GET `http://localhost:47615` | **FAIL** |
+| T1d GET `https://localhost:47615` | OK, 7 ms |
+| T1e POST `http://127.0.0.1:47615` with `Authorization` | **FAIL** |
+| T1f POST `https://127.0.0.1:47615` with `Authorization` | OK, 5 ms |
+| T1g POST `https://localhost:47615` with `Authorization` | OK, 4 ms |
+
+**Conclusion (Mac): plain http is blocked and https works, on the same port with the same code.** HDF's listener must be https, so HDF needs a certificate the Mac trusts.
+
+Still not shown by this test:
+- The page was served from `https://localhost:47630`, so it was itself a local page. A page from a real web address (GitHub Pages) has not been tested.
+- The certificate was trusted on this Mac before the test. What happens with an **untrusted** self-signed certificate was not tested; I expect the call to fail, which is why the one-time approval (H10) is in the plan.
+- Windows (new and classic) has not been tested.
+
 ### D1. Consequences
 1. HDF's listener must speak **https** on `localhost`, with a certificate the computer trusts. The user has to approve that trust once on each computer.
 2. **The page must come from a web address, not from HDF.** If HDF served it, then with HDF closed Outlook could not load the page and would show its own generic error, so the "HoneyDue-Flow was not detected" message could not appear. Decision (PLAN 4.1): hosted page on GitHub Pages. Whether a page from a real web address may call `https://localhost` is **not yet proven** (round 2).

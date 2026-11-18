@@ -54,18 +54,18 @@ else
   echo "Self-check passed: https://localhost:47630 is reachable and trusted."
 fi
 
-say "Next: install the add-in in Outlook"
-cat <<'EOF'
-1. A Finder window is showing manifest.xml. A browser page (aka.ms/olksideload) is opening.
-2. In the browser page, sign in if asked. The "Add-Ins for Outlook" box appears after a few seconds.
-3. Click "My add-ins". At the bottom, under "Custom Addins", click "Add a custom add-in", then "Add from File".
-4. Choose manifest.xml (the file Finder is showing) and accept the warning.
-5. In Outlook, open an email and look for "HDF Spike" in the toolbar (it may be under the "..." menu). Click it.
-6. Press "Copy report" in the side panel and paste the text into the chat.
+say "The spike server is running"
+cat <<'EOF2'
+If the HDF Spike add-in is ALREADY installed in Outlook, you are ready:
+  open an email, click HDF Spike (close and reopen the panel to load the latest page),
+  press "Copy report", and paste it into the chat. Nothing to do in a browser.
+
+Only on a machine where it is NOT installed yet (first time):
+  1. Open https://aka.ms/olksideload in a browser and sign in if asked.
+  2. My add-ins -> Custom Addins -> Add a custom add-in -> Add from File.
+  3. Choose manifest.xml from this folder (spike/manifest.xml).
 
 Leave this window open while testing. Press Ctrl+C or close the window to stop.
-EOF
-open -R manifest.xml 2>/dev/null
-open "https://aka.ms/olksideload" 2>/dev/null
+EOF2
 
 wait $SERVER_PID
