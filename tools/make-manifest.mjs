@@ -10,20 +10,17 @@ const origin = new URL(base).origin;
 const ID = 'e8de068a-410a-4cf7-8080-08ff73e4f3f4';
 const VERSION = '1.0.0.0';
 
-const hosts = (pin) => `
-      <Hosts>
-        <Host xsi:type="MailHost">
-          <DesktopFormFactor>
-            <FunctionFile resid="Commands.Url"/>
-            <ExtensionPoint xsi:type="MessageReadCommandSurface">
+// One button on one surface. Reading an email and writing one are separate surfaces, so each has its own ids.
+const surface = (type, group, button, tip, pin) => `
+            <ExtensionPoint xsi:type="${type}">
               <OfficeTab id="TabDefault">
-                <Group id="hdfGroup">
+                <Group id="${group}">
                   <Label resid="GroupLabel"/>
-                  <Control xsi:type="Button" id="hdfButton">
+                  <Control xsi:type="Button" id="${button}">
                     <Label resid="ButtonLabel"/>
                     <Supertip>
                       <Title resid="ButtonLabel"/>
-                      <Description resid="ButtonTip"/>
+                      <Description resid="${tip}"/>
                     </Supertip>
                     <Icon>
                       <bt:Image size="16" resid="Icon16"/>
@@ -36,7 +33,13 @@ const hosts = (pin) => `
                   </Control>
                 </Group>
               </OfficeTab>
-            </ExtensionPoint>
+            </ExtensionPoint>`;
+
+const hosts = (pin) => `
+      <Hosts>
+        <Host xsi:type="MailHost">
+          <DesktopFormFactor>
+            <FunctionFile resid="Commands.Url"/>${surface('MessageReadCommandSurface', 'hdfGroup', 'hdfButton', 'ButtonTip', pin)}${surface('MessageComposeCommandSurface', 'hdfComposeGroup', 'hdfComposeButton', 'ComposeTip', pin)}
           </DesktopFormFactor>
         </Host>
       </Hosts>
@@ -56,6 +59,7 @@ const hosts = (pin) => `
         </bt:ShortStrings>
         <bt:LongStrings>
           <bt:String id="ButtonTip" DefaultValue="Add the person on this email to a HoneyDue-Flow follow-up flow."/>
+          <bt:String id="ComposeTip" DefaultValue="Add the person on the To line of this message to a HoneyDue-Flow follow-up flow."/>
         </bt:LongStrings>
       </Resources>`;
 
@@ -73,7 +77,7 @@ const xml = `<?xml version="1.0" encoding="UTF-8"?>
   <ProviderName>007Style</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="HoneyDue-Flow"/>
-  <Description DefaultValue="Add the person on the email you are reading to a HoneyDue-Flow follow-up flow."/>
+  <Description DefaultValue="Add the person on the email you are reading, or on the To line of the message you are writing, to a HoneyDue-Flow follow-up flow."/>
   <IconUrl DefaultValue="${base}/assets/icon-32.png"/>
   <HighResolutionIconUrl DefaultValue="${base}/assets/icon-80.png"/>
   <SupportUrl DefaultValue="https://github.com/007Style/HDF-Plug"/>
@@ -95,10 +99,16 @@ const xml = `<?xml version="1.0" encoding="UTF-8"?>
         <RequestedHeight>250</RequestedHeight>
       </DesktopSettings>
     </Form>
+    <Form xsi:type="ItemEdit">
+      <DesktopSettings>
+        <SourceLocation DefaultValue="${base}/index.html"/>
+      </DesktopSettings>
+    </Form>
   </FormSettings>
   <Permissions>ReadItem</Permissions>
   <Rule xsi:type="RuleCollection" Mode="Or">
     <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read"/>
+    <Rule xsi:type="ItemIs" ItemType="Message" FormType="Edit"/>
   </Rule>
   <DisableEntityHighlighting>false</DisableEntityHighlighting>
   <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides" xsi:type="VersionOverridesV1_0">

@@ -42,10 +42,12 @@ export const TEXTS = {
   // The email (PLAN 5.2)
   loadingEmail: 'Reading this email...',
   notEmail: 'Open an email message to add the person on it to a flow.',
-  composing: 'This message is still being written. Send it, then open it from Sent Items to add the person on it.',
+  composeNone: 'Put the person you are writing to on the To line, then press Check again.',
+  composeMany: (count: number) => `There are ${count} people on the To line. This works with one person at a time: leave one person on the To line, then press Check again.`,
   noPerson: 'No other person on this email.',
   personHeading: 'Person on this email',
   readFromSent: (email: string) => `Read from a sent email: ${email}`,
+  readFromTo: (email: string) => `Read from the To line: ${email}`,
   readFromReceived: (email: string) => `Read from a received email: ${email}`,
   checkingPerson: 'Checking this person...',
   personOk: 'Can be added',

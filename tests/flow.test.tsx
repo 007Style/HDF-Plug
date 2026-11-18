@@ -229,7 +229,8 @@ describe('PLG-E what is on the email', () => {
   it.each([
     [{ kind: 'none' } as ItemPeople, TEXTS.noPerson],
     [{ kind: 'not-email' } as ItemPeople, TEXTS.notEmail],
-    [{ kind: 'compose' } as ItemPeople, TEXTS.composing],
+    [{ kind: 'compose-none' } as ItemPeople, TEXTS.composeNone],
+    [{ kind: 'compose-many', count: 3 } as ItemPeople, TEXTS.composeMany(3)],
   ])('PLG-E01 %j shows its words and asks nothing of HoneyDue-Flow', async (item, words) => {
     const { client } = mount({}, item);
     expect(await screen.findByText(words)).toBeInTheDocument();
@@ -280,6 +281,21 @@ describe('PLG-E what is on the email', () => {
     expect(screen.getByTestId('read-from')).toHaveTextContent(TEXTS.readFromReceived('jane@acme.com'));
     change({ kind: 'people', direction: 'sent', people: [{ email: 'raj@x.com', name: 'Raj' }] });
     await waitFor(() => expect(screen.getByTestId('read-from')).toHaveTextContent(TEXTS.readFromSent('raj@x.com')));
+  });
+
+  it('PLG-E07 a message being written: one person on the To line gets the form and says where it was read', async () => {
+    mount({}, { kind: 'people', direction: 'composing', people: [{ email: 'jane@acme.com', name: 'Jane' }] });
+    await ready();
+    expect(screen.getByTestId('read-from')).toHaveTextContent(TEXTS.readFromTo('jane@acme.com'));
+  });
+
+  it('PLG-E08 a message being written with nobody on the To line: Check again reads the line again and shows the person', async () => {
+    const { change, client } = mount({}, { kind: 'compose-none' });
+    expect(await screen.findByText(TEXTS.composeNone)).toBeInTheDocument();
+    change({ kind: 'people', direction: 'composing', people: [{ email: 'jane@acme.com', name: 'Jane' }] });
+    await userEvent.click(screen.getByRole('button', { name: TEXTS.checkAgain }));
+    await ready();
+    expect(client.check).toHaveBeenCalledTimes(1);
   });
 
   it('PLG-E05 Disconnect is always there once connected, and shows the version', async () => {

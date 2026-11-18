@@ -10,7 +10,7 @@
 [![Works with](https://img.shields.io/badge/works%20with-HoneyDue--Flow%201.2.0-F5A623?style=for-the-badge)](https://github.com/007Style/honeyDue-Flow)
 [![Outlook](https://img.shields.io/badge/Outlook-Mac%20%C2%B7%20Windows%20%C2%B7%20web-0078D4?style=for-the-badge)](#️-which-outlook-is-supported)
 [![License](https://img.shields.io/badge/license-proprietary-D0021B?style=for-the-badge)](#-license)
-[![Tests](https://img.shields.io/badge/tests-156%20passing-2EA44F?style=for-the-badge)](#-testing)
+[![Tests](https://img.shields.io/badge/tests-167%20passing-2EA44F?style=for-the-badge)](#-testing)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 
@@ -145,7 +145,7 @@ This is the same on every Outlook that supports add-ins:
 
 > **Add from URL is greyed out on the author's Mac (new Outlook for Mac).** Outlook decides this, not the add-in, and the cause is not known. If yours is greyed out or missing too, choose **Add from File** and use the **Download manifest.xml** link on the install page. **Add from File** is the way that has been followed and works on the Mac.
 
-You should now see **Add to HoneyDue-Flow** in the ribbon when you open an email.
+You should now see **Add to HoneyDue-Flow** in the ribbon when you open an email, and also when you write one. When writing a message, the button reads the **To** line only, and only when it holds exactly one person. Cc and Bcc are not read.
 
 | Client | Notes |
 |---|---|
@@ -210,7 +210,10 @@ The panel is always in exactly one of these states. All the wording lives in one
 | 🔓 **Not signed in** | "HoneyDue-Flow is not signed in to Microsoft 365. Sign in from its Settings." | Sign in inside HoneyDue-Flow |
 | 🟢 **Connected** | The email's person and the form below, and at the bottom "Connected to HoneyDue-Flow 1.2.0" with a **Disconnect** button | |
 | 👤 **No person on the email** | "No other person on this email." (mail from or to yourself only) | Open another email |
-| 📝 **Not an email, or still being written** | "Open an email message to add the person on it to a flow." or "This message is still being written. Send it, then open it from Sent Items..." | Open a sent or received email |
+| 📝 **Not an email** | "Open an email message to add the person on it to a flow." | Open a sent or received email |
+| ✍️ **Writing a message: nobody on the To line** | "Put the person you are writing to on the To line, then press Check again." and **Check again** | Address the message, then **Check again** |
+| ✍️ **Writing a message: more than one person on the To line** | "There are N people on the To line. This works with one person at a time..." and **Check again** | Leave one person on the To line, then **Check again** |
+| ✍️ **Writing a message: one person on the To line** | The same form, and "Read from the To line: {email}" | Pick a flow and press **OK** |
 | 🕵️ **Not in Outlook contacts** | "{email} is not in your Outlook contacts, so it can't be added to a flow." and **Check again** | Add the person to your Outlook contacts, then **Check again** |
 | 📝 **Missing fields** | "This Outlook contact is missing: last name, company. Add them in Outlook, then press Check again." | Fix the contact in Outlook, then **Check again** |
 | 🔁 **Already in a flow** | "{name} is already in the flow '{cadence}'. A contact can be in only one flow at a time." | Nothing; stop the flow in HoneyDue-Flow first if you want another |
@@ -466,7 +469,7 @@ The two sides can be updated **one at a time**. The connection has its own versi
 
 ## ⚠️ Known limits
 
-- **Not yet tried in a real Outlook.** Everything is built and tested against a fake HoneyDue-Flow, and nothing has been proven inside Outlook yet (see [Status](#-status-what-works-today)).
+- **Tried by the author only in new Outlook for Mac so far.** The compose-window button has not yet been tried in a real Outlook, and nothing has been tried on Windows (see [Status](#-status-what-works-today)).
 - **Needs HoneyDue-Flow 1.2.0 or later.**
 - **Same computer only.** Outlook and HoneyDue-Flow must run on the same machine.
 - **Needs the internet** to load the panel, because Outlook fetches the page from the web. HoneyDue-Flow itself does not need it for this.
@@ -475,10 +478,10 @@ The two sides can be updated **one at a time**. The connection has its own versi
 - **People not in Outlook Contacts cannot be added**, and the add-in cannot fill in missing fields. It never writes to Outlook.
 - **Your own address.** If your mailbox address differs from the one HoneyDue-Flow signs in with (for example an alias), the add-in may offer **you** as the person and then say "not in contacts".
 - **Two Outlook accounts, or a shared mailbox,** are not supported in 1.0.0.
-- **One person at a time.** No multi-select. No removing, pausing or editing a flow from Outlook.
+- **One person at a time.** No multi-select. When writing a message, only a single person on the To line works. No removing, pausing or editing a flow from Outlook.
 - **No store listing.** It is installed from a manifest file or by an administrator, not from Microsoft AppSource.
 - **Not tested by the author:** new Outlook for Windows and Outlook on the web (expected to work). Classic Outlook for Windows is tested once at the Windows gate.
-- **Unproven so far:** the page on the real GitHub Pages address calling `https://localhost` inside Outlook; Outlook accepting the certificate; whether Outlook's saved connection survives a full quit; and everything on Windows (including the Windows certificate commands).
+- **Unproven so far:** the compose-window button (and whether Outlook tells the panel when the To line changes, which is why **Check again** is there); and everything on Windows (including the Windows certificate commands).
 - **No code signing.** Like HoneyDue-Flow, nothing here is signed or notarized.
 
 ---

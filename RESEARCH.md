@@ -224,8 +224,17 @@ From HDF's log, in one session: `contacts/check`, `flow-options`, `schedule/chec
 - A first attempt looked stuck: the screen read "No flow matches that search" with OK greyed. The log shows no `schedule/check` call at that point, so no flow had been chosen yet and OK was greyed by design ("Choose a flow to continue"). The cause of the "no match" text was not confirmed; it appears when the search box holds text that matches nothing.
 - **Checked later the same day:** after a full quit and reopen of Outlook, the panel showed **Connected to HoneyDue-Flow 1.2.0**. On a received email from `[sender address]` (not in the user's Outlook contacts) it read the address, showed "Read from a received email: [sender address]", gave the not-in-contacts reason and offered **Check again**. Reported by the user, not logged.
 - **Not yet checked:** the person showing as "already in a flow" after Done.
+- **Not yet checked:** the button in a message being written (added later the same day, To line only, exactly one person; see the next sections).
 - **Asked for, cannot be built as asked:** a button on a contact in the People view. Microsoft's add-in documentation says add-ins activate only when reading or composing a message or appointment, not on other item types.
 
 ## The panel followed the open email correctly (2026-11-18)
 
 After a report of a "stale warning", the panel was changed to show which address it read ("Read from a received email: ..."). It read `[personal address]`, and HDF named the Outlook contact that holds that address as already in a flow. The user confirmed that was correct. Opening another email re-reads it, so `ItemChanged` works on Mac new Outlook.
+
+## The compose-window button and the new icon (2026-11-18, built; NOT yet tried in Outlook)
+
+- **What was built:** a second ribbon button on the surface for writing a message (`MessageComposeCommandSurface`), opening the same panel. In a message being written, the panel reads the **To** line with `item.to.getAsync` and offers the person only when exactly one different person is on it (the user's own address and repeats do not count). Nobody, or more than one, shows a message and a **Check again** button. Cc and Bcc are never read.
+- **Live updates:** the panel asks Outlook to tell it when the To line changes (`RecipientsChanged`) and when another message is opened. Whether new Outlook for Mac sends `RecipientsChanged` is **not known**; **Check again** is there as the sure way.
+- **Tested here:** 167 tests with a fake Outlook and a fake HoneyDue-Flow (the To-line rules, the panel texts, the slow call to Outlook, the manifest having both buttons). None of it has run in a real Outlook.
+- **To try on the Mac:** reload the manifest, start a new message, address it to one contact who has all four fields, press the button, and see the form. Then add a second person to the To line and see the message. Then watch whether the panel updates by itself or needs **Check again**.
+- **Icon:** the ribbon icons (16, 32, 80 px) are now the HoneyDue-Flow icon, resized from HoneyDue-Flow's `build/icon.png`. How it looks at 16 px on the ribbon has not been seen yet.

@@ -54,13 +54,30 @@ describe('PLG-M: the manifest', () => {
   });
 
   it('PLG-M07 pinning is offered in the 1.1 overrides only', () => {
-    expect(xml.match(/<SupportsPinning>true<\/SupportsPinning>/g)).toHaveLength(1);
+    expect(xml.match(/<SupportsPinning>true<\/SupportsPinning>/g)).toHaveLength(2); // one per button
     expect(xml.indexOf('SupportsPinning')).toBeGreaterThan(xml.indexOf('mailappversionoverrides/1.1'));
   });
 
-  it('PLG-M08 the button shows when reading an email, and only then', () => {
-    expect(xml).toContain('MessageReadCommandSurface');
-    expect(xml).not.toContain('MessageComposeCommandSurface');
+  it('PLG-M08 the button shows when reading an email and when writing one, in both override sets', () => {
+    expect(xml.match(/MessageReadCommandSurface/g)).toHaveLength(2);
+    expect(xml.match(/MessageComposeCommandSurface/g)).toHaveLength(2);
+  });
+
+  it('PLG-M11 the two buttons have different ids, and the same panel opens from both', () => {
+    expect(xml).toContain('id="hdfButton"');
+    expect(xml).toContain('id="hdfComposeButton"');
+    expect(xml).toContain('id="hdfGroup"');
+    expect(xml).toContain('id="hdfComposeGroup"');
+    expect(xml.match(/<SourceLocation resid="Taskpane.Url"\/>/g)).toHaveLength(4);
+  });
+
+  it('PLG-M12 the button uses the HoneyDue-Flow icon files', () => {
+    for (const n of [16, 32, 80]) {
+      const png = fs.readFileSync(`public/assets/icon-${n}.png`);
+      expect(png.subarray(1, 4).toString()).toBe('PNG');
+      expect(png.readUInt32BE(16)).toBe(n);
+      expect(png.readUInt32BE(20)).toBe(n);
+    }
   });
 
   it('PLG-M09 every resource id that is used is defined', () => {

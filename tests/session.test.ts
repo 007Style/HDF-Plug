@@ -263,3 +263,30 @@ describe('PLG-S the panel once connected', () => {
     expect(session.get()).toBe(before);
   });
 });
+
+describe('PLG-S11 a message being written is read with a call that answers later', () => {
+  it('PLG-S11a the session waits for the answer, then checks the person', async () => {
+    const client = { check: vi.fn(async () => ({ ok: true, value: { result: 'not_in_contacts' } })), flowOptions: vi.fn(), scheduleCheck: vi.fn(), addFlow: vi.fn() };
+    const people: ItemPeople = { kind: 'people', direction: 'composing', people: [{ email: 'a@x.com', name: 'A' }] };
+    const s = createSession({ client: client as any, readPeople: () => new Promise<ItemPeople>((r) => setTimeout(() => r(people), 5)), watchItem: () => () => {}, onLost: vi.fn(), now: () => NOW });
+    s.start();
+    expect(s.get().item.kind).toBe('loading');
+    await new Promise((r) => setTimeout(r, 30));
+    expect(s.get().item).toEqual(people);
+    expect(client.check).toHaveBeenCalledWith('a@x.com');
+  });
+
+  it('PLG-S11b a slow answer about an earlier To line is dropped when a newer look has finished', async () => {
+    const client = { check: vi.fn(async () => ({ ok: true, value: { result: 'not_in_contacts' } })), flowOptions: vi.fn(), scheduleCheck: vi.fn(), addFlow: vi.fn() };
+    const mk = (e: string): ItemPeople => ({ kind: 'people', direction: 'composing', people: [{ email: e, name: '' }] });
+    const delays = [40, 1];
+    let i = 0;
+    const s = createSession({ client: client as any, readPeople: () => { const n = i++; return new Promise<ItemPeople>((r) => setTimeout(() => r(mk(n === 0 ? 'old@x.com' : 'new@x.com')), delays[n])); }, watchItem: () => () => {}, onLost: vi.fn(), now: () => NOW });
+    s.start();
+    void s.reload();
+    await new Promise((r) => setTimeout(r, 80));
+    expect(s.get().item).toEqual(mk('new@x.com'));
+    expect(client.check).toHaveBeenCalledTimes(1);
+    expect(client.check).toHaveBeenCalledWith('new@x.com');
+  });
+});

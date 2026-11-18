@@ -59,7 +59,14 @@ const Body: React.FC<{ s: SessionState; session: Session }> = ({ s, session }) =
   if (item.kind === 'loading') return <p role="status" className="text-gray-600">{TEXTS.loadingEmail}</p>;
   if (item.kind === 'none') return <p role="status" className="text-gray-700">{TEXTS.noPerson}</p>;
   if (item.kind === 'not-email') return <p role="status" className="text-gray-700">{TEXTS.notEmail}</p>;
-  if (item.kind === 'compose') return <p role="status" className="text-gray-700">{TEXTS.composing}</p>;
+  if (item.kind === 'compose-none' || item.kind === 'compose-many') {
+    return (
+      <div className="space-y-2" role="status">
+        <p className="text-gray-700">{item.kind === 'compose-none' ? TEXTS.composeNone : TEXTS.composeMany(item.count)}</p>
+        <Button onClick={() => void session.reload()}>{TEXTS.checkAgain}</Button>
+      </div>
+    );
+  }
 
   const person = item.people.find((p) => keyOf(p.email) === keyOf(s.selected ?? '')) ?? item.people[0];
   const check = s.checks[keyOf(person.email)];
@@ -81,7 +88,7 @@ const Body: React.FC<{ s: SessionState; session: Session }> = ({ s, session }) =
         </fieldset>
       )}
       <p className="text-xs text-gray-500" data-testid="read-from">
-        {item.direction === 'sent' ? TEXTS.readFromSent(person.email) : TEXTS.readFromReceived(person.email)}
+        {item.direction === 'composing' ? TEXTS.readFromTo(person.email) : item.direction === 'sent' ? TEXTS.readFromSent(person.email) : TEXTS.readFromReceived(person.email)}
       </p>
       <Person_ s={s} session={session} person={person} check={check} />
     </div>

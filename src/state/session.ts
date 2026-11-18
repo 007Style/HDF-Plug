@@ -25,7 +25,7 @@ export interface SessionState {
 
 export interface SessionDeps {
   client: Pick<BridgeClient, 'check' | 'flowOptions' | 'scheduleCheck' | 'addFlow'>;
-  readPeople: () => ItemPeople;
+  readPeople: () => ItemPeople | Promise<ItemPeople>;
   /** Calls the handler when the user opens another email; returns a function that stops. */
   watchItem: (handler: () => void) => () => void;
   /** The connection is gone (no longer allowed, or HoneyDue-Flow closed): the panel looks again and shows the right state. */
@@ -116,7 +116,10 @@ export function createSession(deps: SessionDeps) {
   async function load(): Promise<void> {
     const mine = ++loadGen;
     ++scheduleGen;
-    const item = deps.readPeople();
+    const read = deps.readPeople();
+    // A message being written is read with a call to Outlook, so the answer may come later; a newer look makes this one drop.
+    const item = read instanceof Promise ? await read : read;
+    if (mine !== loadGen) return;
     const past = (when()?.getTime() ?? 0) < now().getTime();
     const fresh = past ? defaultStart(now()) : { date: state.date, time: state.time };
     if (item.kind !== 'people') {

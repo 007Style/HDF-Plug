@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { peopleOf, MAX_PEOPLE } from '../src/office/people';
+import { peopleOf, composePeople, MAX_PEOPLE } from '../src/office/people';
 import { defaultStart, formatWhen, fromLocalParts, toLocalParts } from '../src/state/when';
 
 const addr = (emailAddress: string, displayName = '') => ({ emailAddress, displayName });
@@ -43,6 +43,28 @@ describe('PLG-P who is on the email', () => {
 
   it('PLG-P08 a received email whose sender cannot be used and that has other recipients falls back to nobody else', () => {
     expect(peopleOf({ itemType: 'message', from: addr('/O=EXCH/CN=Z'), to: [addr(ME)] }, ME)).toEqual({ kind: 'none' });
+  });
+});
+
+describe('PLG-C the To line of a message being written', () => {
+  it('PLG-C01 one person on the To line is offered, marked as read from a message being written', () => {
+    expect(composePeople([addr('Jane@Acme.com', 'Jane Doe')], ME)).toEqual({ kind: 'people', direction: 'composing', people: [{ email: 'Jane@Acme.com', name: 'Jane Doe' }] });
+  });
+
+  it('PLG-C02 an empty To line, no list at all, and a line holding only the user each say there is nobody yet', () => {
+    expect(composePeople([], ME)).toEqual({ kind: 'compose-none' });
+    expect(composePeople(null, ME)).toEqual({ kind: 'compose-none' });
+    expect(composePeople(undefined, ME)).toEqual({ kind: 'compose-none' });
+    expect(composePeople([addr(' ME@mine.com ')], ME)).toEqual({ kind: 'compose-none' });
+  });
+
+  it('PLG-C03 more than one different person is refused with the count; the user and repeats do not count', () => {
+    expect(composePeople([addr('a@x.com'), addr('b@x.com'), addr('c@x.com')], ME)).toEqual({ kind: 'compose-many', count: 3 });
+    expect(composePeople([addr('a@x.com'), addr('A@X.com'), addr(ME)], ME)).toMatchObject({ kind: 'people', direction: 'composing' });
+  });
+
+  it('PLG-C04 an address that cannot be looked up is not a person', () => {
+    expect(composePeople([addr('/O=EXCH/CN=X'), addr('')], ME)).toEqual({ kind: 'compose-none' });
   });
 });
 

@@ -22,7 +22,8 @@ Find the words you see in the panel. Every message the panel can show is in [`sr
 |---|---|---|
 | **No other person on this email** | The email is only between you and yourself, or no usable address | Open another email |
 | **Open an email message...** | Something other than an email is selected (for example an appointment) | Open an email |
-| **This message is still being written** | A draft in compose view is not supported | Send it, then open it from Sent Items |
+| **Put the person you are writing to on the To line** | You opened the panel in a message being written, and the To line has nobody on it (yourself does not count, and Cc and Bcc are not read) | Address the message, then press **Check again** |
+| **There are N people on the To line** | When writing a message the panel works with one person only | Leave one person on the To line, then press **Check again**. To add someone else, open an email they sent or received |
 | **{email} is not in your Outlook contacts** | No Outlook contact holds that address | Add the person to your Outlook contacts with first name, last name and company, then press **Check again** |
 | **This Outlook contact is missing: ...** | The contact lacks a first name, last name or company | Add them in Outlook, then **Check again** |
 | **{name} is already in the flow '...'** | The person has a pending step. HoneyDue-Flow allows one flow at a time | Stop the flow in HoneyDue-Flow first. The panel can be right even when the name is not the one on the email: it names the Outlook contact that holds the address. The line "Read from ... email: address" says which address was used |

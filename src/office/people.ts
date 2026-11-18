@@ -3,10 +3,16 @@
 export interface Person { email: string; name: string }
 
 export type ItemPeople =
-  | { kind: 'people'; direction: 'received' | 'sent'; people: Person[] }
+  | { kind: 'people'; direction: 'received' | 'sent' | 'composing'; people: Person[] }
   | { kind: 'none' }
   | { kind: 'not-email' }
-  | { kind: 'compose' };
+  /** A message being written with nobody (usable) on the To line yet. */
+  | { kind: 'compose-none' }
+  /** A message being written with more than one person on the To line. Compose works with one person only. */
+  | { kind: 'compose-many'; count: number };
+
+/** What `peopleOf` finds. `compose` means the message is being written: its To line can only be read with a call to Outlook, so the caller reads it and passes it to `composePeople`. */
+export type FirstLook = ItemPeople | { kind: 'compose' };
 
 /** The parts of an Outlook item this file reads. Office.js's own types are wider; these are the only fields used. */
 export interface RawAddress { emailAddress?: string; displayName?: string }
@@ -30,7 +36,7 @@ function toPerson(a: RawAddress | null | undefined): Person | null {
 }
 
 /** A received email gives its sender. A sent email gives its recipients (To, then Cc), without the user and without repeats. */
-export function peopleOf(item: RawItem | null | undefined, ownEmail: string): ItemPeople {
+export function peopleOf(item: RawItem | null | undefined, ownEmail: string): FirstLook {
   if (!item) return { kind: 'none' };
   if (item.itemType !== undefined && item.itemType !== 'message') return { kind: 'not-email' };
   const to = asAddresses(item.to);
@@ -54,4 +60,22 @@ export function peopleOf(item: RawItem | null | undefined, ownEmail: string): It
     if (people.length === MAX_PEOPLE) break;
   }
   return people.length ? { kind: 'people', direction: 'sent', people } : { kind: 'none' };
+}
+
+/** The To line of a message being written. Only one person is offered: the panel adds one person to one flow at a time, and the Cc and Bcc lines are not read. */
+export function composePeople(to: RawAddress[] | null | undefined, ownEmail: string): ItemPeople {
+  const own = ownEmail.trim().toLowerCase();
+  const seen = new Set<string>();
+  const people: Person[] = [];
+  for (const a of to ?? []) {
+    const p = toPerson(a);
+    if (!p) continue;
+    const key = p.email.toLowerCase();
+    if (key === own || seen.has(key)) continue;
+    seen.add(key);
+    people.push(p);
+  }
+  if (people.length === 0) return { kind: 'compose-none' };
+  if (people.length > 1) return { kind: 'compose-many', count: people.length };
+  return { kind: 'people', direction: 'composing', people };
 }
